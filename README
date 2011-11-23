@@ -139,6 +139,8 @@ Setup Required Variables:
 	Define OpenCV_STATIC_DIR as the OpenCV Statically Linked Install Directory
 		export OpenCV_DIR=~/Documents/<OpenCV2.2StaticInstallBase
 
+	Add OpenCV Library Directory to the LD_LIBRARY_PATH before running
+		export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OpenCV_DIR/lib
 
 
 Build the Benchmark:

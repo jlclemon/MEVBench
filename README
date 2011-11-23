@@ -1,0 +1,199 @@
+Copyright 2011, Reagents of The University Of Michigan
+
+This is a readme for the Michigan Embedded Vision Benchmark (MEVBench).
+
+What is MEVBench?
+
+It is a set of benchmarks that are targeted towards embedded computer vision.
+
+
+Platforms Tested On:
+	Ubuntu 10.04 + on x86 and ARM A9
+
+
+Required libraries:
+
+OpenCV 2.2 *^
+Pthreads
+
+
+
+
+* Note that it may run with OpenCV2.3 also but has not been tested.  
+^If using on ARM you will need to enable SIFT by modifying the sift.cpp in the OpenCV source and then building with CMAKE.  You need to comment out the lines that disable SIFT when ARM is detected.
+
+
+
+This package includes:
+
+
+	Feature Extraction:
+
+		SIFT               (N* Threads)
+		SURF               (N Theads)
+		FAST with Brief    (N Threads)
+		HoG                (N Threads)
+
+
+	Feature Classification:
+
+		SVM                 (N THreads)
+		K-nearest neighbor  (N threads)
+		Adaboost            (N Threads)
+
+
+	Application Examples:
+
+		Object Localization (Feature extraction and classification) (N Threads)
+		Augmented Reality                                           (1 Thread)
+		Face Detection                                              (1 Thread)
+
+*The base build MEVBench structure only has config files for 1,2,4 or 8 threads.  In order to use a different number of threads, a new config file needs to be made.
+
+
+Directory Structure:
+	MEVBench
+            |
+            |
+	    |- Benchmarks - Holds the Binaries and Sources
+            |      |
+                   |- Applications
+                          |
+                          |-AugmentedReality - Source
+                                    |
+                                    |-bin  - Binaries
+                                    |-obj  - obj files
+                          |-FaceDetection - Source
+                                    |
+                                    |-bin  - Binaries
+                                    |-obj  - obj files
+                          |-ObjectRecogition - Source
+                                    |
+                                    |-bin  - Binaries
+                                    |-obj  - obj files
+                   |- Feature Classification - Source
+                          |-bin  - Binaries
+                          |-obj  - obj files
+
+                   |- Feature Extraction - Source
+                          |-bin  - Binaries
+                          |-obj  - obj files
+
+	    |- Common - Holds commond scripts like run all
+            |      
+
+	    |- Configs - Holds the Config Files for the algorithms
+                   |- Applications
+                          |
+                          |-AugmentedReality - Config Files
+                                    |
+                          |-FaceDetection - Config Files
+                                    |
+                          |-ObjectRecogition - Config Files
+                                    
+                   |- Feature Classification - 
+                          |
+                          |-BOOST - Config Files
+                                    |
+                          |-KNN - Config Files
+                                    |
+                          |-SVM - Config Files
+                   |- Feature Extraction 
+                          |
+                          |-SIFT - Config Files
+                                    |
+                          |-HoG - Config Files
+                                    |
+                          |-SURF - Config Files
+                                    |
+                          |-FAST - Config Files
+
+            |      
+
+	    |- Data - Holds the Data for the benchmarks
+            |      
+
+	    |- Licenses - Holds License Files
+            |      
+
+	    |- Results - This is where timing results are stored
+            |      
+
+	    |- Tools - This is where timing results are stored
+                          |- AddFeatureClassificationToDescFile - Tool to agument feature descriptor file with classifications
+                          |
+                          | - CameraCalibration - Tool to create a calibration file for augmented reality if you want to add your own images
+                          | - pattern.png - pattern for performing calibration
+                          | - ARMarker.pdf - Marker for Augmented Reality
+                                             
+
+Building MEVBench:
+
+Build OpenCV 2.2:
+	Download OpenCV 2.2 and use cmake to build (Directions can be found at opencv.willowgarage.com)
+		If you plan on doing static builds or runs please build a separate static set of OpenCV Libraries
+Setup Required Variables:
+	Define OpenCV_DIR as the OpenCV Dynamically Linked Install Directory
+		export OpenCV_DIR=~/Documents/<OpenCV2.2InstallBase>		
+
+	Define OpenCV_STATIC_DIR as the OpenCV Statically Linked Install Directory
+		export OpenCV_DIR=~/Documents/<OpenCV2.2StaticInstallBase
+
+
+
+Build the Benchmark:
+	In the MEVBench Root:
+		./build.sh static
+		  or
+		./build.sh dynamic
+
+	For more information run build.sh with no parameters
+
+Run the Benchmark:
+	In the MEVBench Root:
+   		./run.sh all
+                 or ./run.sh for a list of options.
+
+
+
+Next Update Will Include:
+	Automatic Checker For results.
+
+How to check results:
+	
+	First let me say I am aware of the need to check results.  The result checking was not automated because of time constraints.  Instead for each algorithm I would compare the single threaded result with any multithreaded.
+	I would determine if it was reasonable and if they matched well.  This can be done visually by turning the windows on for single threaded.  
+	
+	Feature Extraction:  There are quite a few feature points.  Thus comparing to the list from the single threaded execuation was how I did it.  
+
+	Feature Classification:  Once again comparison to the single threaded
+
+	Augmented Reality:  A red cube should be projected on the marker.  Turn on the window and check.
+
+	Face Detection:  Typcally only 1 face although it can have 2 false alarms as well.
+
+	Object Recognition:  Look at the output window.  Also the calculated transform or center point will help.
+
+	Once again I will be adding automatic checking in the future.  But for now I have been using knowledge of the algorithms to check them
+
+Download the Paper:  http://www.eecs.umich.edu/MEVBench
+
+Contact Us: MEVBenchGroup@umich.edu
+
+
+Special Thanks to:
+
+OpenCV Community
+GSRC
+NSF
+SD-VBS  and Dr Tayloy
+Rob Hess for allowing us the use of his SIFT Library  (Coming Soon).
+Marius Muja et al. for allowing the use of their FLANN library.
+
+
+
+
+Release Log:
+
+
+v.01

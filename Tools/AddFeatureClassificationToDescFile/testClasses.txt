@@ -1,0 +1,16 @@
+1
+1
+1
+0
+0
+1
+1
+1
+3
+4
+
+/home/jlclemon/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml"
+
+
+
+-inputMethod imageFile -imageStartId 0 -imagePath /home/jlclemon/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT -imageExt .png -Local sift -Desc sift -snapShotMode -loadDescriptors /home/jlclemon/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.yml -loadDescriptorsImage /home/jlclemon/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.png

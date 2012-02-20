@@ -18,10 +18,10 @@ imageFileList
 #.png
 
 -imageList
-./Data/AugmentedReality/AugImages_hd/imageList.txt
+./Data/AugmentedReality/AugImages_cif/imageList.txt
 
 -imageListBaseDir
-./Data/AugmentedReality/AugImages_hd/
+./Data/AugmentedReality/AugImages_cif/
 
 #-showWindows
 

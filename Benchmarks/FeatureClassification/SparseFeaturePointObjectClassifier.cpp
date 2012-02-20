@@ -38,6 +38,8 @@
 #include "SparseFeaturePointObjectClassifier.h"
 #include "WorkerThreadInfo.h"
 
+using namespace cv;
+
 SparseFeaturePointObjectClassifier::SparseFeaturePointObjectClassifier() {
 	// TODO Auto-generated constructor stub
 

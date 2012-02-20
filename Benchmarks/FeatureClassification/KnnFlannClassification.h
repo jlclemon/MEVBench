@@ -44,6 +44,7 @@
 #define KNNFLANNCLASSIFICATION_H_
 
 using namespace cv;
+using namespace std;
 
 class KnnFlannClassification : public CvStatModel
 {

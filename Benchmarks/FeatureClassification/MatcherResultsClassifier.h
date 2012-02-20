@@ -48,6 +48,7 @@
 
 
 using namespace cv;
+using namespace std;
 
 class MatcherResultsClassifier :public CvStatModel
 {

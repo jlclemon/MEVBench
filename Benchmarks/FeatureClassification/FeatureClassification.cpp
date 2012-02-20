@@ -649,16 +649,33 @@ FeatureMatcherParams setupMatcherParams(FeatureClassificationConfig & featureCla
 		case FEATURE_MATCHER_KNN_FLANN:
 		{
 
-			//params.flannKDTreeIndexParams
+			#ifdef OPENCV_VER_2_3
 
-			flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams;
-			//params.flannKDTreeIndexParams->trees = 4;
-			tmp->trees = 4;
+				//params.flannKDTreeIndexParams
 
-			params.flannSearchParams = new flann::SearchParams;
-			params.flannSearchParams->checks = 200;
-			params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
-			params.numberOfNeighbors = 32;
+				flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams(4);
+				//params.flannKDTreeIndexParams->trees = 4;
+				//tmp->trees = 4;
+
+				params.flannSearchParams = new flann::SearchParams(200);
+				//params.flannSearchParams->checks = 200;
+				params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
+				params.numberOfNeighbors = 32;
+
+
+			#else
+				//params.flannKDTreeIndexParams
+
+				flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams;
+				//params.flannKDTreeIndexParams->trees = 4;
+				tmp->trees = 4;
+
+				params.flannSearchParams = new flann::SearchParams;
+				params.flannSearchParams->checks = 200;
+				params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
+				params.numberOfNeighbors = 32;
+			#endif
+
 
 
 			break;
@@ -672,18 +689,33 @@ FeatureMatcherParams setupMatcherParams(FeatureClassificationConfig & featureCla
 		case FEATURE_MATCHER_RADIUS_FLANN:
 		{
 
-			flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams;
-			//params.flannKDTreeIndexParams = new flann::KDTreeIndexParams(4);
-			//params.flannIndexParams  = new flann::KDTreeIndexParams(4);
-			//params.flannKDTreeIndexParams->trees = 4;
-			tmp->trees = 4;
+			#ifdef OPENCV_VER_2_3
+				flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams(4);
+				//params.flannKDTreeIndexParams = new flann::KDTreeIndexParams(4);
+				//params.flannIndexParams  = new flann::KDTreeIndexParams(4);
+				//params.flannKDTreeIndexParams->trees = 4;
+				//tmp->trees = 4;
 
 
-			params.flannSearchParams = new flann::SearchParams;
-			params.flannSearchParams->checks = 200;
-			params.radiusMatchRadius = .1;
-			params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
+				params.flannSearchParams = new flann::SearchParams(200);
+				//params.flannSearchParams->checks = 200;
+				params.radiusMatchRadius = .1;
+				params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
 
+
+			#else
+				flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams;
+				//params.flannKDTreeIndexParams = new flann::KDTreeIndexParams(4);
+				//params.flannIndexParams  = new flann::KDTreeIndexParams(4);
+				//params.flannKDTreeIndexParams->trees = 4;
+				tmp->trees = 4;
+
+
+				params.flannSearchParams = new flann::SearchParams;
+				params.flannSearchParams->checks = 200;
+				params.radiusMatchRadius = .1;
+				params.flannIndexParams = &(*(tmp));//params.flannKDTreeIndexParams));
+			#endif
 			break;
 		}
 		case FEATURE_MATCHER_KNN_HESS_KDTREE:
@@ -923,16 +955,29 @@ FeatureClassifierParams setupClassifierParams(FeatureClassificationConfig & feat
 		}
 		case FEATURE_CLASSIFIER_KNN_FLANN:
 		{
-			flann::KDTreeIndexParams * kdTreeIndexParams = new flann::KDTreeIndexParams;
-			//params.knnFlannClassifierParams.flannKDTreeIndexParams =
-			kdTreeIndexParams->trees = 4;
 
-			params.knnFlannClassifierParams.flannSearchParams = new flann::SearchParams;
-			params.knnFlannClassifierParams.flannSearchParams->checks = 200;
+			#ifdef OPENCV_VER_2_3
+				flann::KDTreeIndexParams * kdTreeIndexParams = new flann::KDTreeIndexParams(4);
+				//params.knnFlannClassifierParams.flannKDTreeIndexParams =
+				//kdTreeIndexParams->trees = 4;
 
-			params.knnFlannClassifierParams.numberOfNeighbors = 32;
-			params.knnFlannClassifierParams.flannIndexParams = kdTreeIndexParams;
+				params.knnFlannClassifierParams.flannSearchParams = new flann::SearchParams(200);
+				//params.knnFlannClassifierParams.flannSearchParams->checks = 200;
 
+				params.knnFlannClassifierParams.numberOfNeighbors = 32;
+				params.knnFlannClassifierParams.flannIndexParams = kdTreeIndexParams;
+
+			#else
+				flann::KDTreeIndexParams * kdTreeIndexParams = new flann::KDTreeIndexParams;
+				//params.knnFlannClassifierParams.flannKDTreeIndexParams =
+				kdTreeIndexParams->trees = 4;
+
+				params.knnFlannClassifierParams.flannSearchParams = new flann::SearchParams;
+				params.knnFlannClassifierParams.flannSearchParams->checks = 200;
+
+				params.knnFlannClassifierParams.numberOfNeighbors = 32;
+				params.knnFlannClassifierParams.flannIndexParams = kdTreeIndexParams;
+			#endif
 			break;
 		}
 		case FEATURE_CLASSIFIER_KNN_HESS_KDTREE:

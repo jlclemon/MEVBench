@@ -62,21 +62,26 @@ Directory Structure:
                           |-AugmentedReality - Source
                                     |
                                     |-bin  - Binaries
+					|-arm - armv7a Binaries
                                     |-obj  - obj files
                           |-FaceDetection - Source
                                     |
                                     |-bin  - Binaries
+					|-arm - armv7a Binaries
                                     |-obj  - obj files
                           |-ObjectRecogition - Source
                                     |
                                     |-bin  - Binaries
+					|-arm - armv7a Binaries
                                     |-obj  - obj files
                    |- Feature Classification - Source
                           |-bin  - Binaries
+				|-arm - armv7a Binaries
                           |-obj  - obj files
 
                    |- Feature Extraction - Source
                           |-bin  - Binaries
+				|-arm - armv7a Binaries
                           |-obj  - obj files
 
 	    |- Common - Holds commond scripts like run all

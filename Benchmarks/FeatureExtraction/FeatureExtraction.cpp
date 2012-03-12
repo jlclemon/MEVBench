@@ -791,7 +791,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 
 		if(featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_HoG)
 		{
-			cout << "Running Localize" << endl;
+			//cout << "Running Localize" << endl;
 			LocalizeFeaturePoints(inputImagesPerFrame[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA],  currentKeyPoints, currentBboxes,featureExtractionConfig);
 		}
 		else
@@ -801,7 +801,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 			if(	!featureExtractionConfig.sameLocalAndDesc)
 			{
 
-				cout << "Running Desc" << endl;
+				//cout << "Running Desc" << endl;
 
 				LocalizeFeaturePoints(inputImagesPerFrame[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA],  currentKeyPoints, featureExtractionConfig,featureDetector );
 
@@ -810,7 +810,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 			{
 
 
-				cout << "Running Desc" << endl;
+				//cout << "Running Desc" << endl;
 				LocalizeFeaturePoints(inputImagesPerFrame[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA],  currentKeyPoints, featureExtractionConfig, descriptors);
 
 
@@ -5055,9 +5055,9 @@ void LocalizeFeaturePoints(Mat & inputImage, vector<KeyPoint> & keyPoints, vecto
 
 
 		}
-	cout << "Running Sliding Windows" << endl;
+	//cout << "Running Sliding Windows" << endl;
 	}
-	cout << "Running Localize" << endl;
+	//cout << "Running Localize" << endl;
 	if(featureExtractionConfig.addCenterLocation && featureExtractionConfig.localizationHogPtr != NULL)
 	{
 		keyPoints.push_back(calculateHogCenterLocation(inputImage, featureExtractionConfig.localizationHogPtr));

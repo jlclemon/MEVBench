@@ -32,10 +32,20 @@ export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
 export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
 export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
 export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
-#export XTRA_PARAMS="-DUSE_MARSS"
-#export XTRA_PARAMS="-DTSC_TIMING"
-export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING"
-export ARM_XTRA_PARAMS="-DOPENCV_VER_2_3"
+if [ -n "$XTRA_PARAMS" ]; then
+	echo "Setting XTR_PARAMS=$XTRA_PARAMS based on pre defined value"
+	#export XTRA_PARAMS="$XTRA_PARAMS -DUSE_MARSS"
+	#export XTRA_PARAMS="$XTRA_PARAMS -DTSC_TIMING"
+	#export XTRA_PARAMS="$XTRA_PARAMS -DCLOCK_GETTIME_TIMING"
+
+else
+
+	#export XTRA_PARAMS="-DUSE_MARSS"
+	#export XTRA_PARAMS="-DTSC_TIMING"
+	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING"
+fi
+
+export ARM_XTRA_PARAMS="-DOPENCV_VER_2_3 $XTRA_PARAMS"
 BASEDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_ARM="FALSE"
 

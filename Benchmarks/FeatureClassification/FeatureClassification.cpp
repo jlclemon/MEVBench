@@ -34,6 +34,14 @@
 #warning "Using MARSS"
 #include "ptlcalls.h"
 #endif
+#ifdef USE_GEM5
+#warning "Using GEM5"
+extern "C"
+{
+	#include "m5op.h"
+}
+#endif
+
 
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"
@@ -2251,6 +2259,20 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 
 };
 #endif
+
+#ifdef USE_GEM5
+	#ifdef GEM5_CHECKPOINT_WORK
+		m5_checkpoint(0, 0);
+	#endif
+
+	#ifdef GEM5_SWITCHCPU_AT_WORK
+		m5_switchcpu();
+	#endif 
+	m5_dumpreset_stats(0, 0);
+#endif
+
+
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0] );
 #endif
@@ -2285,6 +2307,19 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 #ifdef USE_MARSS
 	ptlcall_kill();
 #endif
+
+
+#ifdef USE_GEM5
+
+	m5_dumpreset_stats(0, 0);
+	#ifdef GEM5_EXIT_AFTER_WORK
+		m5_exit(0);
+	#endif
+
+
+#endif
+
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ fc_timingVector.size()/2] );
 #endif
@@ -2488,6 +2523,19 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 //	ptlcall_single_enqueue("-stats featureClassify.stats");
 //	ptlcall_single_enqueue("-loglevel 0");
 #endif
+#ifdef USE_GEM5
+	#ifdef GEM5_CHECKPOINT_WORK
+		m5_checkpoint(0, 0);
+	#endif
+
+	#ifdef GEM5_SWITCHCPU_AT_WORK
+		m5_switchcpu();
+	#endif 
+	m5_dumpreset_stats(0, 0);
+#endif
+
+
+
 
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId()] );
@@ -2572,6 +2620,17 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 #ifdef USE_MARSS
 	ptlcall_kill();
 #endif
+
+#ifdef USE_GEM5
+
+	m5_dumpreset_stats(0, 0);
+	#ifdef GEM5_EXIT_AFTER_WORK
+		m5_exit(0);
+	#endif
+
+
+#endif
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId() + fc_timingVector.size()/2] );
 #endif
@@ -3999,11 +4058,35 @@ void * featureClassification_testCoordinatorThreadStandAlone(void * threadParam)
 //	ptlcall_single_enqueue("-stats featureClassify.stats");
 //	ptlcall_single_enqueue("-loglevel 0");
 #endif
+
+
+#ifdef USE_GEM5
+	#ifdef GEM5_CHECKPOINT_WORK
+		m5_checkpoint(0, 0);
+	#endif
+
+	#ifdef GEM5_SWITCHCPU_AT_WORK
+		m5_switchcpu();
+	#endif 
+	m5_dumpreset_stats(0, 0);
+#endif
+
+
 	classificationCoordinatorThreadFunctionStandAlone(genData->featureClassificationData);
 
 #ifdef USE_MARSS
 	ptlcall_kill();
 #endif
+#ifdef USE_GEM5
+
+	m5_dumpreset_stats(0, 0);
+	#ifdef GEM5_EXIT_AFTER_WORK
+		m5_exit(0);
+	#endif
+
+
+#endif
+
 
 	return NULL;
 }

@@ -10,6 +10,16 @@
 #warning "Using MARSS"
 #include "ptlcalls.h"
 #endif
+#ifdef USE_GEM5
+#warning "Using GEM5"
+extern "C"
+{
+	#include "m5op.h"
+}
+#endif
+
+
+
 //#define TSC_TIMING
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"
@@ -1137,6 +1147,19 @@ int augmentedReality_main(int argc, const char * argv[])
 	ptlcall_single_enqueue("-stats augReality.stats");
 	//ptlcall_single_enqueue("-loglevel 0");
 #endif
+
+#ifdef USE_GEM5
+	#ifdef GEM5_CHECKPOINT_WORK
+		m5_checkpoint(0, 0);
+	#endif
+
+	#ifdef GEM5_SWITCHCPU_AT_WORK
+		m5_switchcpu();
+	#endif 
+	m5_dumpreset_stats(0, 0);
+#endif
+
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( aug_timingVector[0] );
 #endif
@@ -1472,6 +1495,17 @@ int augmentedReality_main(int argc, const char * argv[])
 #ifdef USE_MARSS
 	ptlcall_kill();
 #endif
+
+#ifdef USE_GEM5
+
+	m5_dumpreset_stats(0, 0);
+	#ifdef GEM5_EXIT_AFTER_WORK
+		m5_exit(0);
+	#endif
+
+
+#endif
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( aug_timingVector[0+ aug_timingVector.size()/2] );
 #endif

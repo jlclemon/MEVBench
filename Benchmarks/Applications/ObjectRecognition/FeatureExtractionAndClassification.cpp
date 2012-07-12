@@ -36,7 +36,9 @@
 
 #include <iostream>
 #include <opencv2/features2d/features2d.hpp>
-#include <opencv2/nonfree/nonfree.hpp>
+#ifndef OPENCV_VER_2_3
+	#include <opencv2/nonfree/nonfree.hpp>
+#endif
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/mat.hpp>

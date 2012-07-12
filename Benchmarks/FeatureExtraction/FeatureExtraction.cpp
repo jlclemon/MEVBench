@@ -4829,10 +4829,21 @@ Ptr<FeatureDetector> setupLocalization(FeatureExtractionConfig & featureExtracti
 			{
 				//SIFT::DetectorParams detectorParams;
 				//SIFT::CommonParams commonParams;
-				featureDetector = new SiftFeatureDetector( 0, 3,0.04,10,1.6);//(detectorParams,commonParams);
-				//SIFT::DescriptorParams descriptorParams;
+				
+				#ifdef OPENCV_VER_2_3
+					featureDetector = new SiftFeatureDetector(0.04,10.0);//(detectorParams,commonParams);
+					//SIFT::DescriptorParams descriptorParams;
 
-				featureExtractionConfig.sift = new SIFT( 0, 3,0.04,10,1.6);//(commonParams,detectorParams,descriptorParams);
+					featureExtractionConfig.sift = new SIFT( 0.04,10.0);//(commonParams,detectorParams,descriptorParams);
+					
+
+				#else
+					featureDetector = new SiftFeatureDetector( 0, 3,0.04,10,1.6);//(detectorParams,commonParams);
+					//SIFT::DescriptorParams descriptorParams;
+
+					featureExtractionConfig.sift = new SIFT( 0, 3,0.04,10,1.6);//(commonParams,detectorParams,descriptorParams);
+				#endif
+
 			}
 			break;
 
@@ -5200,8 +5211,12 @@ Ptr<DescriptorExtractor> setupDescriptor(FeatureExtractionConfig & featureExtrac
 			{
 				//SIFT::DescriptorParams descriptorParams;
 				//SIFT::CommonParams commonParams;
-				descriptorExtractor = new SiftDescriptorExtractor( 0, 3,0.04,10,1.6);//(descriptorParams,commonParams);
+				#ifdef OPENCV_VER_2_3
+					descriptorExtractor = new SiftDescriptorExtractor( 0.04,10.0);//(descriptorParams,commonParams);
+				#else	
 
+					descriptorExtractor = new SiftDescriptorExtractor( 0, 3,0.04,10,1.6);//(descriptorParams,commonParams);
+				#endif
 			}
 			break;
 

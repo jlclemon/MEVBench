@@ -138,7 +138,7 @@ Building MEVBench:
 Build OpenCV 2.4.2:
 	Download OpenCV 2.4.2 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com)
 		*This has been tested with the native builds static and dynamic.  Arm has not been tested but is expected to work.  To use on ARM add the -DOPENCV_2_4 to the ARM_XTRA_PARAMS in build.sh to be safe.
-
+	Note: When building static OpenCV for native ubuntu, you will need build 3rd party libraries.  In particular using cmake set it to build: jasper, jpeg, png, zlib, and tiff libraries.  Also build with 1394, eigen, jasper, jpeg, png, tiff, unicap.  Make sure to uncheck Build shared libs and build package.
 
 
 Build OpenCV 2.3.1:

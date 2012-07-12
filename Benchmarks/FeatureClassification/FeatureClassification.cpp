@@ -758,8 +758,12 @@ FeatureMatcherPtrs setupMatcher(FeatureClassificationConfig & featureClassificat
 
 		case FEATURE_MATCHER_BRUTEFORCE:
 		{
-			matcherPtrs.matcher = new BruteForceMatcher<L2<float> >();
 
+			#ifndef OPENCV_2_4
+				matcherPtrs.matcher = new BruteForceMatcher<L2<float> >();
+			#else
+				matcherPtrs.matcher = new BFMatcher(NORM_L2);
+			#endif
 			break;
 		}
 		case FEATURE_MATCHER_KNN_FLANN:

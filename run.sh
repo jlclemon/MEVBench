@@ -28,7 +28,8 @@
 #
 
 
-export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
+export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall/"
+#"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
 export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
 
 BASEDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -133,6 +134,7 @@ else
 	APPLICATION="${1}"
 	INPUTSIZE="${2}"
 	NUMBEROFTHREADS="${3}"
+
 
 	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" ]; then
 		echo "Feature Extraction"

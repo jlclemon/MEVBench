@@ -30,11 +30,12 @@ CDEFINES=
 CCDEFINES= -DFEATURE_EXTRACTION_MODULE -D_DRAW_TEXT_ON_IMAGE_DEFINED -DFEATURE_CLASSIFICATION_MODULE
 LLFLAGSBASE= -static 
 LIBSUPPORT_FFMPEG= swscale avdevice avformat avcodec avutil
-LIB3PARTY= jasper tiff opencv_lapack zlib png jpeg unicap  
+LIB3PARTY= libjasper libtiff zlib libpng libjpeg unicap  
+#jasper tiff opencv_lapack zlib png jpeg unicap  
 #v4l2 v4lconvert v4l1 
-LIBSBASE= opencv_highgui opencv_ml opencv_objdetect opencv_video opencv_features2d opencv_features2d opencv_flann opencv_calib3d opencv_imgproc opencv_core $(LIB3PARTY) $(LIBSUPPORT_FFMPEG) rt pthread
+LIBSBASE= opencv_highgui opencv_ml opencv_objdetect opencv_video opencv_calib3d opencv_flann opencv_features2d opencv_imgproc opencv_nonfree opencv_core $(LIB3PARTY) $(LIBSUPPORT_FFMPEG) rt pthread
 #The lib path for the opencv libraries assuming you don't have a native install
-LIBPATHS=$(OpenCV_STATIC_DIR)/lib $(OpenCV_STATIC_DIR)/share/opencv/3rdparty/lib
+LIBPATHS=$(OpenCV_STATIC_DIR)/lib $(OpenCV_STATIC_DIR)/share/OpenCV/3rdparty/lib
 HEADERPATH=
 BINDIR=./bin
 OBJDIR=./obj

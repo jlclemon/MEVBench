@@ -37,25 +37,29 @@ boosted_stumps
 #knn_hess
 
 -queryDescFile
-./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
+./Data/FeatureClassification/inria30PosNeg.yml
+#./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 #/home/jlclemon/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.yml
 
 -queryDescClassesFile
-./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
+./Data/FeatureClassification/inria30PosNeg.yml
+#./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 
 
 
 
 -trainDescFile
-./Data/FeatureClassification/inriaCombPosNeg.yml
+./Data/FeatureClassification/inria30PosNeg.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 
 
 -trainDescClassesFile
-./Data/FeatureClassification/inriaCombPosNeg.yml
+./Data/FeatureClassification/inria30PosNeg.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 

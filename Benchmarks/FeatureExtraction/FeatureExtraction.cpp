@@ -1096,6 +1096,11 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 		//timingArray[3] = clock();
 
 		//currentKeyPoints.clear();
+
+#ifdef USE_GEM5
+	m5_dumpreset_stats(0, 0);
+#endif
+
 		if(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_HoG)
 		{
 			//cout << "Desc Build" << endl;
@@ -2178,9 +2183,9 @@ void featureExtractionHandleMultiThreadBuildFeatureDescriptors(struct GeneralWor
 
 	if(myFeatureExtractionConfig->currentDescriptorAlgo == FEATURE_DESC_HoG)
 	{
-		cout << "Build Feature Desc" << endl;
+		//cout << "Build Feature Desc" << endl;
 		myMultiThreadExtractionData->myDescriptors =  buildFeatureDescriptors(regionToUseForComputation, myMultiThreadExtractionData->myKeypoints,myMultiThreadExtractionData->myBboxes,*myFeatureExtractionConfig,myFeatureExtractionData->descHogPtr);
-		cout << "Boxes: "<<myMultiThreadExtractionData->myBboxes.size() << endl;
+		//cout << "Boxes: "<<myMultiThreadExtractionData->myBboxes.size() << endl;
 	}
 	else
 	{
@@ -2296,6 +2301,10 @@ void featureExtractionHandleFeatureExtractionCoordinator(struct GeneralWorkerThr
 //	{
 //		myThread->waitAtBarrier();
 //	}
+
+#ifdef USE_GEM5
+	m5_dumpreset_stats(0, 0);
+#endif
 
 	// TODO Add in descriptor building right here --->
 	featureExtractionHandleMultiThreadBuildFeatureDescriptors(genData,workerThreadInfo);
@@ -3568,19 +3577,21 @@ void localizeFeaturesSingleTime(Mat & inputImage, vector<KeyPoint> & keyPoints, 
 	{
 		case FEATURE_LOCALIZATION_SIFT:
 			{
-				SIFT::DetectorParams detectorParams;
-				SIFT::CommonParams commonParams;
-				SiftFeatureDetector detector(detectorParams,commonParams);
+				//SIFT::DetectorParams detectorParams;
+				//SIFT::CommonParams commonParams;
+
+				//Keep all, 3 octaves. contrast .04, edge 10, sigma 1.6
+				SiftFeatureDetector detector( 0, 3,0.04,10,1.6);
 				detector.detect(inputImage,keyPoints);
 			}
 			break;
 
 		case FEATURE_LOCALIZATION_SURF:
 			{
-				SURF::CvSURFParams detectorParams;
+				//SURF::CvSURFParams detectorParams;
 								
-				detectorParams.hessianThreshold = 400.0;
-				SurfFeatureDetector detector(detectorParams.hessianThreshold);
+				//detectorParams.hessianThreshold = 400.0;
+				SurfFeatureDetector detector(400.0);
 				detector.detect(inputImage,keyPoints);
 
 
@@ -4706,8 +4717,12 @@ Ptr<DescriptorMatcher> setupMatcher(FeatureExtractionConfig & featureExtractionC
 		case FEATURE_MATCHER_BRUTEFORCE:
 		default:
 		{
-
+		#ifndef OPENCV_2_4
 		matcher = new BruteForceMatcher<L2<float> >;
+		#else
+		matcher = new BFMatcher(NORM_L2);
+		#endif
+
 
 		}
 
@@ -4744,7 +4759,13 @@ Ptr<DescriptorMatcher> setupMatcher(FeatureExtractionConfig & featureExtractionC
 		default:
 		{
 
-		matcher = new BruteForceMatcher<L2<float> >;
+
+		#ifndef OPENCV_2_4
+			matcher = new BruteForceMatcher<L2<float> >;
+		#else
+			matcher = new BFMatcher(NORM_L2);
+		#endif
+
 		matcher->add(trainedDescriptors);
 		matcher->train();
 
@@ -4806,22 +4827,22 @@ Ptr<FeatureDetector> setupLocalization(FeatureExtractionConfig & featureExtracti
 	{
 		case FEATURE_LOCALIZATION_SIFT:
 			{
-				SIFT::DetectorParams detectorParams;
-				SIFT::CommonParams commonParams;
-				featureDetector = new SiftFeatureDetector(detectorParams,commonParams);
-				SIFT::DescriptorParams descriptorParams;
+				//SIFT::DetectorParams detectorParams;
+				//SIFT::CommonParams commonParams;
+				featureDetector = new SiftFeatureDetector( 0, 3,0.04,10,1.6);//(detectorParams,commonParams);
+				//SIFT::DescriptorParams descriptorParams;
 
-				featureExtractionConfig.sift = new SIFT(commonParams,detectorParams,descriptorParams);
+				featureExtractionConfig.sift = new SIFT( 0, 3,0.04,10,1.6);//(commonParams,detectorParams,descriptorParams);
 			}
 			break;
 
 		case FEATURE_LOCALIZATION_SURF:
 			{
-				SURF::CvSURFParams detectorParams;
+				//SURF::CvSURFParams detectorParams;
 								
-				detectorParams.hessianThreshold = 400.0;
-				featureDetector = new SurfFeatureDetector (detectorParams.hessianThreshold);
-				featureExtractionConfig.surf = new SURF(detectorParams.hessianThreshold,4,2,false);
+				//detectorParams.hessianThreshold = 400.0;
+				featureDetector = new SurfFeatureDetector(400.0) ;//(detectorParams.hessianThreshold);
+				featureExtractionConfig.surf = new SURF(400.0,4,2,false);//(detectorParams.hessianThreshold,4,2,false);
 				//cout << "SURF SIZE: "<<(*(featureExtractionConfig.surf)).descriptorSize() << endl;
 
 			}
@@ -5177,21 +5198,21 @@ Ptr<DescriptorExtractor> setupDescriptor(FeatureExtractionConfig & featureExtrac
 	{
 		case FEATURE_DESC_SIFT:
 			{
-				SIFT::DescriptorParams descriptorParams;
-				SIFT::CommonParams commonParams;
-				descriptorExtractor = new SiftDescriptorExtractor(descriptorParams,commonParams);
+				//SIFT::DescriptorParams descriptorParams;
+				//SIFT::CommonParams commonParams;
+				descriptorExtractor = new SiftDescriptorExtractor( 0, 3,0.04,10,1.6);//(descriptorParams,commonParams);
 
 			}
 			break;
 
 		case FEATURE_DESC_SURF:
 			{
-				SURF::CvSURFParams detectorParams;
+				//SURF::CvSURFParams detectorParams;
 								
-				detectorParams.hessianThreshold = 400.0;
-				detectorParams.nOctaves = 4;
-				detectorParams.nOctaveLayers = 2;
-				descriptorExtractor = new SurfDescriptorExtractor( detectorParams.nOctaves,detectorParams.nOctaveLayers);
+				//detectorParams.hessianThreshold = 400.0;
+				//detectorParams.nOctaves = 4;
+				//detectorParams.nOctaveLayers = 2;
+				descriptorExtractor = new SurfDescriptorExtractor(400.0,4,2);//( detectorParams.nOctaves,detectorParams.nOctaveLayers);
 
 
 
@@ -5254,10 +5275,10 @@ Mat buildFeatureDescriptors(Mat & inputImage, vector<KeyPoint> & keyPoints,vecto
 		currentPoint.y = (int)keyPoints[i].pt.y;
 		points.push_back(currentPoint);
 	}
-
+	//cout << "Points:" << points.size() << endl;
 	if(!featureExtractionConfig.runSlidingWindowLocal)
 	{
-		
+		//cout << "Sliding"<<endl;
 		if(points.size() != 0)
 		{
 
@@ -5304,11 +5325,13 @@ Mat buildFeatureDescriptors(Mat & inputImage, vector<KeyPoint> & keyPoints,vecto
 	}
 	else
 	{
+		//cout << "Desc Vec Size: " << descriptorsVec.size() << endl;
 		//cout << "B" << "Rows:" <<inputImage.rows <<" Cols:"<< inputImage.cols << endl;
 		descriptorExtractor->compute( inputImage,descriptorsVec,Size(8,8),Size(32,32));
-
+		//cout << "Desc Vec Size: " << descriptorsVec.size() << endl;
 		int numberOfVectors = descriptorsVec.size()/descriptorExtractor->getDescriptorSize();
 		descriptors.create(numberOfVectors,descriptorExtractor->getDescriptorSize(),CV_32FC1);
+		//cout << "Number of Vectors:" << numberOfVectors << endl;
 		for(unsigned int row = 0; row <numberOfVectors; row++)
 		{
 			for(unsigned int col = 0; col< descriptorExtractor->getDescriptorSize(); col++)
@@ -5319,9 +5342,9 @@ Mat buildFeatureDescriptors(Mat & inputImage, vector<KeyPoint> & keyPoints,vecto
 		}
 
 
-
-		//cout << "Desc Rows: "<<descriptors.rows  << endl;
-
+		#ifdef VERBOSE
+		cout << "Desc Rows: "<<descriptors.rows  << endl;
+		#endif
 	}
 
 

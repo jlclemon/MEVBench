@@ -37,31 +37,31 @@ geo_center
 #knn_hess
 
 -queryDescFile
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.yml
-#/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.yml
+#./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.yml
 
 -queryDescClassesFile
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
-#/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
+#./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
 
 -loadQueryKeyPoints
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0Classes.yml
 
 -loadQueryImage
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.png
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookInStream/bookFilesSIFT0.png
 
 -trainDescFile
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.yml
-#/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.yml
+#./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.yml
 
 -trainDescClassesFile
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
-#/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
+#./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
 
 -loadTrainKeyPoints
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0Classes.yml
 
 -loadTrainImage
-/home/jclemons/Documents/visionData/visionData/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.png
+./Data/ObjectRecognition/SiftLocalSiftDesc/ProbBookAloneWithImages/probBookSift0.png
 
 

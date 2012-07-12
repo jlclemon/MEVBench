@@ -28,8 +28,10 @@
 
 
 
-export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
-export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
+export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall"
+#"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
+export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeStaticInstall"
+#"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
 export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
 export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
 if [ -n "$XTRA_PARAMS" ]; then
@@ -42,10 +44,11 @@ else
 
 	#export XTRA_PARAMS="-DUSE_MARSS"
 	#export XTRA_PARAMS="-DTSC_TIMING"
-	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING"
+
+	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING -DOPENCV_VER_2_3 -DOPENCV_2_4"
 fi
 
-export ARM_XTRA_PARAMS="-DOPENCV_VER_2_3 $XTRA_PARAMS"
+export ARM_XTRA_PARAMS="-DOPENCV_VER_2_3 -DUSE_GEM5 $XTRA_PARAMS"
 BASEDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_ARM="FALSE"
 

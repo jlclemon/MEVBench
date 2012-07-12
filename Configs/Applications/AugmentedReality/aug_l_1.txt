@@ -27,5 +27,5 @@ imageFileList
 
 -noWaitKey
 
--longList
-20
+#-longList
+#20

@@ -1172,6 +1172,9 @@ int augmentedReality_main(int argc, const char * argv[])
 	int  normalizedOrienation;
 	while(!done)
 	{
+#ifdef USE_GEM5
+	m5_dumpreset_stats(0, 0);
+#endif
 		augmentedRealityGetNextFrames(augmentedRealityConfig, augmentedRealityData);
 
 		if(augmentedRealityData.outOfImages == true)
@@ -1215,6 +1218,11 @@ int augmentedReality_main(int argc, const char * argv[])
 		vector<Vec4i> hierarchy;
 
 		Mat thresholdedFramesForContours = thresholdedFrames[0].clone();
+
+
+#ifdef USE_GEM5
+	m5_dumpreset_stats(0, 0);
+#endif
 		findContours(thresholdedFramesForContours, contours, hierarchy, CV_RETR_CCOMP,CV_CHAIN_APPROX_TC89_KCOS);
 
 

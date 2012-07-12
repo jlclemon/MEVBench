@@ -28,7 +28,7 @@ LDEBUG=$(CCDEBUG)
 CDEFINES=
 CCDEFINES=-DFEATURE_EXTRACTION_MODULE -D_DRAW_TEXT_ON_IMAGE_DEFINED -DFEATURE_CLASSIFICATION_MODULE
 LLFLAGSBASE= -Wall -o
-LIBSBASE=pthread rt opencv_calib3d opencv_core opencv_features2d opencv_features2d opencv_flann opencv_highgui opencv_imgproc opencv_ml opencv_objdetect opencv_video
+LIBSBASE=pthread rt opencv_calib3d opencv_core opencv_features2d opencv_features2d opencv_flann opencv_highgui opencv_imgproc opencv_ml opencv_objdetect opencv_video opencv_nonfree
 #opencv_features2d
 #The lib path for the opencv libraries assuming you don't have a native install
 LIBPATHS=$(OpenCV_DIR)/lib

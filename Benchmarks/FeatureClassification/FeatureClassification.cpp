@@ -657,7 +657,7 @@ FeatureMatcherParams setupMatcherParams(FeatureClassificationConfig & featureCla
 		case FEATURE_MATCHER_KNN_FLANN:
 		{
 
-			#ifdef OPENCV_VER_2_3
+			#ifndef OPENCV_VER_2_2
 
 				//params.flannKDTreeIndexParams
 
@@ -697,7 +697,7 @@ FeatureMatcherParams setupMatcherParams(FeatureClassificationConfig & featureCla
 		case FEATURE_MATCHER_RADIUS_FLANN:
 		{
 
-			#ifdef OPENCV_VER_2_3
+			#ifndef OPENCV_VER_2_2
 				flann::KDTreeIndexParams *tmp = new flann::KDTreeIndexParams(4);
 				//params.flannKDTreeIndexParams = new flann::KDTreeIndexParams(4);
 				//params.flannIndexParams  = new flann::KDTreeIndexParams(4);
@@ -968,7 +968,7 @@ FeatureClassifierParams setupClassifierParams(FeatureClassificationConfig & feat
 		case FEATURE_CLASSIFIER_KNN_FLANN:
 		{
 
-			#ifdef OPENCV_VER_2_3
+			#ifndef OPENCV_VER_2_2
 				flann::KDTreeIndexParams * kdTreeIndexParams = new flann::KDTreeIndexParams(4);
 				//params.knnFlannClassifierParams.flannKDTreeIndexParams =
 				//kdTreeIndexParams->trees = 4;

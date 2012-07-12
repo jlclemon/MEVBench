@@ -49,7 +49,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-#ifdef OPENCV_VER_2_3
+#ifndef OPENCV_VER_2_2
 #include <opencv2/video/tracking.hpp>
 #endif
 

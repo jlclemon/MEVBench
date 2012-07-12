@@ -1,4 +1,4 @@
-Copyright 2011, Reagents of The University Of Michigan
+Copyright 2012, Reagents of The University Of Michigan
 
 This is a readme for the Michigan Embedded Vision Benchmark (MEVBench).
 
@@ -8,19 +8,19 @@ It is a set of benchmarks that are targeted towards embedded computer vision.
 
 
 Platforms Tested On:
-	Ubuntu 10.04 + on x86 and ARM A9
+	Ubuntu 11.04 on x86 with OpenCV 2.4.2 and ARM A9 with OpenCV2.3.1 ( OpenCV 2.4.2 should also work on ARM but I have not tested it)
 
 
 Required libraries:
 
-OpenCV 2.2 *^
+OpenCV 2.4.2 *^
 Pthreads
 
 
 
 
-* Note that it may run with OpenCV2.3 also but has not been tested. If you want to experiment you will need to modify the XTRA_PARAMS variable in build.sh to include -DOPENCV_VER_2_3
-^If using 2.2 on ARM you will need to enable SIFT by modifying the sift.cpp in the OpenCV source and then building with CMAKE.  You need to comment out the lines that disable SIFT when ARM is detected.
+* Note that it runs with OpenCV2.3.1 also. 
+^This release officially drops OpenCV 2.2 support.  Partially because it is a pain getting 2.2 to compile on 11.10+.  If using 2.2 on ARM you will need to enable SIFT by modifying the sift.cpp in the OpenCV source and then building with CMAKE.  You need to comment out the lines that disable SIFT when ARM is detected.  You will also need to make sure XTRA_PARAMS has -DOPENCV_VER_2_2
 
 
 
@@ -134,18 +134,30 @@ Directory Structure:
 
 Building MEVBench:
 
+
+Build OpenCV 2.4.2:
+	Download OpenCV 2.4.2 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com)
+		*This has been tested with the native builds static and dynamic.  Arm has not been tested but is expected to work.  To use on ARM add the -DOPENCV_2_4 to the ARM_XTRA_PARAMS in build.sh to be safe.
+
+
+
+Build OpenCV 2.3.1:
+	Download OpenCV 2.3.1 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com and opencv.org)
+		*You will need to remove the -DOPENCV_2_4 from XTRA_PARAMS in build.sh
+
+
+<No Longer Supported>
 Build OpenCV 2.2:
 	Download OpenCV 2.2 and use cmake to build (Directions can be found at opencv.willowgarage.com)
 		If you plan on doing static builds or runs please build a separate static set of OpenCV Libraries
-Build OpenCV 2.3.1:
-	Download OpenCV 2.3.1 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com)
-		*Technically it has not been tested with native builds.  If you want to experiment you will need to modify the XTRA_PARAMS variable in build.sh to include -DOPENCV_VER_2_3
+
+
 
 Setup Required Variables in build.sh:
 	Define OpenCV_DIR as the OpenCV Dynamically Linked Install Directory
-		export OpenCV_DIR=~/Documents/<OpenCV2.2InstallBase>		
+		export OpenCV_DIR=~/Documents/<OpenCV2.4.2InstallBase>		
 	Define OpenCV_STATIC_DIR as the OpenCV Statically Linked Install Directory
-		export OpenCV_DIR=~/Documents/<OpenCV2.2StaticInstallBase
+		export OpenCV_DIR=~/Documents/<OpenCV2.4.2StaticInstallBase
 	Define OpenCV_ARM_DIR as the OpenCV Armv7a Dynamically Linked Install Directory
 		export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/<OpenCV2.3.1ArmInstallBase>"
 	Define OpenCV_ARM_STATIC_DIR as the OpenCV Armv7a Statically Linked Install Directory
@@ -208,6 +220,12 @@ Marius Muja et al. for allowing the use of their FLANN library.
 
 
 Release Log:
+
+
+v.03 - Update to OpenCV Support
+	- Adds OpenCV 2.4.2 support
+	- Drops OpenCV 2.2 support due to difficulty building on Ubuntu 11.10+.  If you want to use 2.2, you will need to use MEVBench v.02
+
 
 v.02 - Bug Fixes and Cross Compiling
 	- Fixes directory missing build bug

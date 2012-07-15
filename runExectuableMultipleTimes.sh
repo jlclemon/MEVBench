@@ -16,7 +16,7 @@ FACE_DETECT_EXEC=bin/FaceDetection
 
 ExecOutputFileName=timing.csv
 
-AlgoList=('SIFT' 'HoG' 'FAST' 'SURF')
+AlgoList=('SIFT' 'HoG' 'FAST' 'SURF' 'ORB')
 let algoCount=${#AlgoList[@]}
 SizeList=('l' 'm' 'h')
 let sizeCount=${#SizeList[@]}

@@ -63,7 +63,6 @@ function print_usage {
     echo "                         FACEDETECT - Face Detection"
     echo "                         OBJRECOG   - Object Recognition and Pose Estimation"
     echo "                         AUGREAL    - Augmented Reality"
-    echo "                         AUGREAL    - Augmented Reality"
     echo "                  Input Sizes:"
     echo "                         l          - Small (cif)"
     echo "                         m          - Medium (vga)"
@@ -128,7 +127,7 @@ else
 	INPUTSIZE="${2}"
 	NUMBEROFTHREADS="${3}"
 
-	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" ]; then
+	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" -o $APPLICATION == "ORB" ]; then
 		echo "Feature Extraction"
 
 		echo "-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"

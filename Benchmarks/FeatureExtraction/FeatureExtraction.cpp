@@ -467,6 +467,12 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 				featureExtractionConfig.runFastLocal=true;
 				featureExtractionConfig.currentLocalizationAlgo = FEATURE_LOCALIZATION_FAST;
 			}
+			if(!commandStringVector[i+1].compare("orb"))
+			{
+				featureExtractionConfig.runOrbLocal=true;
+				featureExtractionConfig.currentLocalizationAlgo = FEATURE_LOCALIZATION_ORB;
+			}
+
 			if(!commandStringVector[i+1].compare("hog"))
 			{
 				featureExtractionConfig.runHogLocal=true;
@@ -520,6 +526,12 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 				featureExtractionConfig.runFastDesc=true;
 				featureExtractionConfig.currentDescriptorAlgo = FEATURE_DESC_FAST;
 			}
+			if(!commandStringVector[i+1].compare("orb"))
+			{
+				featureExtractionConfig.runOrbDesc=true;
+				featureExtractionConfig.currentDescriptorAlgo = FEATURE_DESC_ORB;
+			}
+
 			if(!commandStringVector[i+1].compare("hog"))
 			{
 				featureExtractionConfig.runHogDesc=true;
@@ -584,7 +596,8 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 	}
 
 	if(!(((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SURF)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SURF))||
-		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SIFT)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SIFT))))
+		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SIFT)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SIFT)) ||
+		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_ORB)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_ORB))))
 	{
 
 		featureExtractionConfig.sameLocalAndDesc = false;
@@ -691,7 +704,8 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 
 
 	if(((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SURF)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SURF))||
-		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SIFT)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SIFT)))
+		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_SIFT)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_SIFT))||
+		((featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_ORB)&&(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_ORB)))
 	{
 
 		featureExtractionConfig.sameLocalAndDesc = true;
@@ -712,6 +726,11 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 	case FEATURE_DESC_SURF:
 		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
 		ptlcall_single_enqueue("-stats featureExtract_surf.stats");
+		//ptlcall_single_enqueue("-loglevel 0");
+		break;
+	case FEATURE_DESC_ORB:
+		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
+		ptlcall_single_enqueue("-stats featureExtract_orb.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_FAST:
@@ -1499,17 +1518,29 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 	}
 
 
+	if(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_ORB  || featureExtractionConfig.currentLocalizationAlgo == FEATURE_LOCALIZATION_ORB )
+	{
 
-	featureExtractionData.xBufferAmount = 16;
-	featureExtractionData.yBufferAmount = 16;
+		featureExtractionData.xBufferAmount = 31;
+		featureExtractionData.yBufferAmount = 31;
+
+	}
+	else
+	{
+		featureExtractionData.xBufferAmount = 16;
+		featureExtractionData.yBufferAmount = 16;
+
+	}
+
 	featureExtractionData.descriptorExtractor = NULL;
 	featureExtractionData.featureDetector = NULL;
 	featureExtractionData.matcher = NULL;
 	featureExtractionData.sift = NULL;
 	featureExtractionData.surf = NULL;
+	featureExtractionData.orb = NULL;
 	featureExtractionConfig.sift = NULL;
 	featureExtractionConfig.surf = NULL;
-
+	featureExtractionConfig.orb = NULL;
 	featureExtractionData.trainedDescriptors = new Mat;
 	featureExtractionData.trainedRefPoint = new Point2f;
 	featureExtractionData.trainedKeypoints = new vector<KeyPoint>;
@@ -1523,7 +1554,7 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 		loadFeatureDescriptorsAndOrKeypoints( featureExtractionConfig.descriptorsFilename,  descTypeString,localTypeString ,featureExtractionConfig.currentDescriptorAlgo,featureExtractionConfig.currentLocalizationAlgo,featureExtractionData.featureDetector,&(*(featureExtractionData.trainedKeypoints)),featureExtractionData.descriptorExtractor, &(*(featureExtractionData.trainedDescriptors)));
 		featureExtractionData.sift= new SIFT;
 		featureExtractionData.surf= new SURF;
-
+		featureExtractionData.orb= new ORB;
 
 		*(featureExtractionData.trainedRefPoint) = computeCenterPointOfKeyPoints(*(featureExtractionData.trainedKeypoints));
 		*(featureExtractionData.trainedRefVectors) = computeRelativeCenterPointVectorsForKeypoints( *(featureExtractionData.trainedKeypoints));
@@ -2477,6 +2508,11 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 		ptlcall_single_enqueue("-stats featureExtract_surf.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
+	case FEATURE_DESC_ORB:
+		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
+		ptlcall_single_enqueue("-stats featureExtract_orb.stats");
+		//ptlcall_single_enqueue("-loglevel 0");
+		break;
 	case FEATURE_DESC_FAST:
 		//ptlcall_single_enqueue("-logfile featureExtract_fast.log");
 		ptlcall_single_enqueue("-stats featureExtract_fast.stats");
@@ -2740,6 +2776,25 @@ MultiThreadAlgorithmData * setupFeatureExtractionMultiThreadedData(FeatureExtrac
 
 			}
 			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
+
+				FeatureExtractionMultiThreadData * multiThreadData = new FeatureExtractionMultiThreadData;
+
+
+
+				multiThreadData->keypoints = new vector<KeyPoint>;
+				multiThreadData->descriptors = new Mat;
+
+
+
+				returnVal = multiThreadData;
+
+
+
+			}
+			break;
+
 		case FEATURE_LOCALIZATION_FAST:
 			{
 
@@ -2824,6 +2879,12 @@ MultiThreadAlgorithmData * setupFeatureExtractionMultiThreadedData(FeatureExtrac
 
 			}
 			break;
+		case FEATURE_DESC_ORB:
+			{
+
+
+			}
+			break;
 		case FEATURE_DESC_FAST:
 			{
 
@@ -2877,6 +2938,16 @@ MultiThreadAlgorithmData * cloneFeatureExtractionMultiThreadedData(FeatureExtrac
 			break;
 
 		case FEATURE_LOCALIZATION_SURF:
+			{
+
+				FeatureExtractionMultiThreadData * baseMultiThreadData = reinterpret_cast<FeatureExtractionMultiThreadData *>(baseData);
+				FeatureExtractionMultiThreadData * multiThreadData = new FeatureExtractionMultiThreadData;
+				*multiThreadData = *baseMultiThreadData;
+
+				returnVal = multiThreadData;
+
+			}
+		case FEATURE_LOCALIZATION_ORB:
 			{
 
 				FeatureExtractionMultiThreadData * baseMultiThreadData = reinterpret_cast<FeatureExtractionMultiThreadData *>(baseData);
@@ -2941,6 +3012,12 @@ MultiThreadAlgorithmData * cloneFeatureExtractionMultiThreadedData(FeatureExtrac
 			break;
 
 		case FEATURE_DESC_SURF:
+			{
+
+
+			}
+			break;
+		case FEATURE_DESC_ORB:
 			{
 
 
@@ -3592,6 +3669,29 @@ void localizeFeaturesSingleTime(Mat & inputImage, vector<KeyPoint> & keyPoints, 
 								
 				//detectorParams.hessianThreshold = 400.0;
 				SurfFeatureDetector detector(400.0);
+				detector.detect(inputImage,keyPoints);
+
+
+			}
+			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
+				int numberOfFeatures = 5000;
+				float scaleFactor = 1.2f;
+				int levels = 8;
+
+
+				#ifdef OPENCV_VER_2_3
+					ORB::CommonParams orbParams = ORB::CommonParams();
+					orbParams.scale_factor_ = scaleFactor;
+					orbParams.n_levels_ = levels;
+
+					OrbFeatureDetector detector(numberOfFeatures,orbParams);
+				#else
+					OrbFeatureDetector detector(numberOfFeatures,scaleFactor,levels);
+
+				#endif
+
 				detector.detect(inputImage,keyPoints);
 
 
@@ -4717,7 +4817,7 @@ Ptr<DescriptorMatcher> setupMatcher(FeatureExtractionConfig & featureExtractionC
 		case FEATURE_MATCHER_BRUTEFORCE:
 		default:
 		{
-		#ifndef OPENCV_2_4
+		#ifdef OPENCV_VER_2_3
 		matcher = new BruteForceMatcher<L2<float> >;
 		#else
 		matcher = new BFMatcher(NORM_L2);
@@ -4854,6 +4954,28 @@ Ptr<FeatureDetector> setupLocalization(FeatureExtractionConfig & featureExtracti
 				//detectorParams.hessianThreshold = 400.0;
 				featureDetector = new SurfFeatureDetector(400.0) ;//(detectorParams.hessianThreshold);
 				featureExtractionConfig.surf = new SURF(400.0,4,2,false);//(detectorParams.hessianThreshold,4,2,false);
+				//cout << "SURF SIZE: "<<(*(featureExtractionConfig.surf)).descriptorSize() << endl;
+
+			}
+			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
+				int numberOfFeatures = 5000;
+				float scaleFactor = 1.2f;
+				int levels = 8;
+
+				#ifdef OPENCV_VER_2_3
+					ORB::CommonParams orbParams = ORB::CommonParams();
+					orbParams.scale_factor_ = scaleFactor;
+					orbParams.n_levels_ = levels;
+
+					featureDetector = new OrbFeatureDetector(numberOfFeatures,orbParams);
+					featureExtractionConfig.orb = new ORB(numberOfFeatures,orbParams);
+				#else				
+					featureDetector = new OrbFeatureDetector(numberOfFeatures,scaleFactor,levels);
+					featureExtractionConfig.orb = new ORB(numberOfFeatures,scaleFactor,levels);
+				#endif
+				//(detectorParams.hessianThreshold,4,2,false);
 				//cout << "SURF SIZE: "<<(*(featureExtractionConfig.surf)).descriptorSize() << endl;
 
 			}
@@ -5007,13 +5129,40 @@ void LocalizeFeaturePoints(Mat & inputImage, vector<KeyPoint> & keyPoints, Featu
 				keyPoints.clear();
 
 
-				(*(featureExtractionConfig.surf))(tmp,Mat(),keyPoints,descriptorsVec,false);
-				int numberOfFeatures = descriptorsVec.size()/(*(featureExtractionConfig.surf)).descriptorSize();
-				//cout << "SURF SIZE: "<<(*(featureExtractionConfig.surf)).descriptorSize() << endl;
-				descriptors = Mat(descriptorsVec).reshape(1,numberOfFeatures);
+
+				#ifdef OPENCV_VER_2_3
+					//cout << "SURF Desc Count: "<<descriptors.rows << "," << descriptors.cols << endl;
+					(*(featureExtractionConfig.surf))(tmp,Mat(),keyPoints,descriptorsVec,false);
+					int numberOfFeatures = descriptorsVec.size()/(*(featureExtractionConfig.surf)).descriptorSize();
+					//cout << "SURF SIZE: "<<(*(featureExtractionConfig.surf)).descriptorSize() << endl;
+					descriptors = Mat(descriptorsVec).reshape(1,numberOfFeatures).clone();
+				#else
+
+				(*(featureExtractionConfig.surf))(tmp,Mat(),keyPoints,descriptors,false);
+
+				#endif
 
 
+			}
+			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
 
+				//vector<float> descriptorsVec;
+				Mat tmp;
+				if(inputImage.channels() ==3)
+				{
+					cvtColor(inputImage,tmp,CV_BGR2GRAY);
+				}
+				else
+				{
+					tmp.copyTo(tmp);
+				}
+				keyPoints.clear();
+
+
+				(*(featureExtractionConfig.orb))(tmp,Mat(),keyPoints,descriptors,false);
+				//cout << "ORB Desc Count: "<<descriptors.rows << "," << descriptors.cols << endl;
 			}
 			break;
 		case FEATURE_LOCALIZATION_FAST:
@@ -5233,6 +5382,29 @@ Ptr<DescriptorExtractor> setupDescriptor(FeatureExtractionConfig & featureExtrac
 
 			}
 			break;
+		case FEATURE_DESC_ORB:
+			{
+				int numberOfFeatures = 5000;
+				float scaleFactor = 1.2f;
+				int levels = 8;
+
+
+				#ifdef OPENCV_VER_2_3
+					ORB::CommonParams orbParams = ORB::CommonParams();
+					orbParams.scale_factor_ = scaleFactor;
+					orbParams.n_levels_ = levels;
+
+					descriptorExtractor =  new OrbDescriptorExtractor(orbParams);
+				#else
+					descriptorExtractor =  new OrbDescriptorExtractor(numberOfFeatures,scaleFactor,levels);
+
+				#endif
+				//descriptorExtractor = new OrbDescriptorExtractor(400.0,4,2);//( detectorParams.nOctaves,detectorParams.nOctaveLayers);
+
+
+
+			}
+			break;
 		case FEATURE_DESC_FAST:
 
 			break;
@@ -5383,6 +5555,10 @@ string convertDescTypeToString(FeaturesDescriptorAlgos descriptorType)
 		case FEATURE_DESC_SURF:
 				retVal = "Surf";
 			break;
+		case FEATURE_DESC_ORB:
+				retVal = "Orb";
+			break;
+
 		case FEATURE_DESC_FAST:
 				retVal = "Fast";
 			break;
@@ -5414,6 +5590,9 @@ string convertLocalTypeToString(FeaturesLocalizationAlgos localizationMethod)
 			break;
 		case FEATURE_LOCALIZATION_SURF:
 				retVal = "Surf";
+			break;
+		case FEATURE_LOCALIZATION_ORB:
+				retVal = "Orb";
 			break;
 		case FEATURE_LOCALIZATION_FAST:
 				retVal = "Fast";
@@ -5553,6 +5732,14 @@ bool loadFeatureDescriptorsAndOrKeypoints( string filename,  string &descTypeStr
 
 			}
 			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
+				detector = new OrbFeatureDetector;
+
+
+
+			}
+			break;
 		case FEATURE_LOCALIZATION_FAST:
 			{
 
@@ -5612,6 +5799,16 @@ bool loadFeatureDescriptorsAndOrKeypoints( string filename,  string &descTypeStr
 
 			}
 			break;
+		case FEATURE_DESC_ORB:
+			{
+
+				descriptorExtractor = new OrbDescriptorExtractor;
+
+
+
+			}
+			break;
+
 		case FEATURE_DESC_FAST:
 
 			break;
@@ -5663,6 +5860,14 @@ bool loadFeatureDescriptorsAndOrKeypoints( string filename,  string &descTypeStr
 		case FEATURE_LOCALIZATION_SURF:
 			{
 				detector = new SurfFeatureDetector;
+
+
+
+			}
+			break;
+		case FEATURE_LOCALIZATION_ORB:
+			{
+				detector = new OrbFeatureDetector;
 
 
 

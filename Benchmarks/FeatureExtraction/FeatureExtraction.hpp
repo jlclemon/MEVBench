@@ -79,6 +79,7 @@ enum FeaturesLocalizationAlgos
 	FEATURE_LOCALIZATION_HoG = 8,
 	FEATURE_LOCALIZATION_SLIDING_WINDOW = 16,
 	FEATURE_LOCALIZATION_CENTER_POINT = 32,
+	FEATURE_LOCALIZATION_ORB = 64,
 	NUMBER_OF_FEATURE_LOCALIZATION_ALGOS=6
 
 };
@@ -91,6 +92,7 @@ enum FeaturesDescriptorAlgos
 	FEATURE_DESC_FAST = 4,
 	FEATURE_DESC_HoG = 8,
 	FEATURE_DESC_BRIEF = 16,
+	FEATURE_DESC_ORB = 32,
 	NUMBER_OF_FEATURE_DESC_ALGOS = 4
 
 };
@@ -145,12 +147,14 @@ struct FeatureExtractionConfig
 	bool runSiftLocal:1;
 	bool runSurfLocal:1;
 	bool runFastLocal:1;
+	bool runOrbLocal:1;
 	bool runHogLocal:1;
 	bool runSlidingWindowLocal:1;
 
 	bool runSiftDesc:1;
 	bool runSurfDesc:1;
 	bool runFastDesc:1;
+	bool runOrbDesc:1;
 	bool runHogDesc:1;
 	bool runBriefDesc:1;
 
@@ -180,6 +184,7 @@ struct FeatureExtractionConfig
 
 	SIFT * sift;
 	SURF * surf;
+	ORB * orb;
 
 	int numberOfImages;
 	int leftCameraId;
@@ -257,7 +262,7 @@ struct FeatureExtractionData
 	int yBufferAmount;
 	Ptr<SIFT> sift;
 	Ptr<SURF> surf;
-
+	Ptr<ORB> orb;
 
 
 	Ptr<Mat> trainedDescriptors;

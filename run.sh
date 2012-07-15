@@ -30,7 +30,7 @@
 
 export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall/"
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
-export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
+export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeStaticInstall/"
 
 BASEDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export MEVBENCH_BASEDIR="$BASEDIR"
@@ -62,6 +62,7 @@ function print_usage {
     echo "                         HoG  - Histogram Of Oriented Gradients   "
     echo "                         FAST - FAST Corner Detector  "
     echo "                         SURF - Speeded Up Robust Features"
+    echo "                         ORB - Oriented Brief Features"
     echo "                  Feature Classification Algorithms:  "
     echo "                         BOOST - Boosted Classifier"
     echo "                         KNN   - K Nearest Neighbor"
@@ -69,7 +70,6 @@ function print_usage {
     echo "                  Feature Applications:"
     echo "                         FACEDETECT - Face Detection"
     echo "                         OBJRECOG   - Object Recognition and Pose Estimation"
-    echo "                         AUGREAL    - Augmented Reality"
     echo "                         AUGREAL    - Augmented Reality"
     echo "                  Input Sizes:"
     echo "                         l          - Small (cif)"
@@ -136,7 +136,7 @@ else
 	NUMBEROFTHREADS="${3}"
 
 
-	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" ]; then
+	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" -o $APPLICATION == "ORB" ]; then
 		echo "Feature Extraction"
 
 		echo "-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
@@ -240,190 +240,6 @@ else
 fi
 
 exit
-while [ $# -gt 0 ];
-do
-    if [ "${1}" == "static" ]; then
-
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make --file=makefile_static clean
-	make --file=makefile_static 
-
-
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-    fi
-    if [ "${1}" == "dynamic" ]; then
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make clean
-	make "XTRA_PARAMS=$XTRA_PARAMS"
-
-
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make clean
-	make
-
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make clean
-	make
-
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make clean
-	make
-
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make clean
-	make
-    fi
-    if [ "${1}" == "allVersions" ]; then
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make clean
-	make
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make clean
-	make
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make clean
-	make
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make clean
-	make
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make clean
-	make
-	make --file=makefile_static clean
-	make --file=makefile_static
-
-
-
-
-
-    fi
-    if [ "${1}" == "cleanAll" ]; then
-
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make clean
-	make --file=makefile_static clean
-
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make clean
-	make --file=makefile_static clean
-
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make clean
-	make --file=makefile_static clean
-
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make clean
-	make --file=makefile_static clean
-
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make clean
-	make --file=makefile_static clean
-
-  
-
-
-    fi
-
-    if [ "${1}" == "AugmentedReality" ]; then
-
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make clean
-	make "XTRA_PARAMS=$XTRA_PARAMS"
-
-    fi
-    if [ "${1}" == "AugmentedRealityStatic" ]; then
-	cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
-	make --file=makefile_static clean
-	make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
-    fi
-
-
-
-    if [ "${1}" == "FaceDetection" ]; then
-
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make clean
-	make 
-
-    fi
-    if [ "${1}" == "FaceDetectionStatic" ]; then
-	cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
-	make --file=makefile_static clean
-	make --file=makefile_static
-    fi
-
-    if [ "${1}" == "ObjectRecognition" ]; then
-
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make clean
-	make 
-
-    fi
-    if [ "${1}" == "ObjectRecognitionStatic" ]; then
-	cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
-	make --file=makefile_static clean
-	make --file=makefile_static
-    fi
-
-    if [ "${1}" == "FeatureClassification" ]; then
-
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make clean
-	make 
-
-    fi
-    if [ "${1}" == "FeatureClassificationStatic" ]; then
-	cd "$BASEDIR/Benchmarks/FeatureClassification"
-	make --file=makefile_static clean
-	make --file=makefile_static
-    fi
-
-    if [ "${1}" == "FeatureExtraction" ]; then
-
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make clean
-	make 
-
-    fi
-    if [ "${1}" == "FeatureExtractionStatic" ]; then
-	cd "$BASEDIR/Benchmarks/FeatureExtraction"
-	make --file=makefile_static clean
-	make --file=makefile_static
-    fi
-
-
-
-
-    shift
-done
 
 
 

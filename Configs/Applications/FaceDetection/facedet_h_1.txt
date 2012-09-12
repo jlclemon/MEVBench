@@ -27,6 +27,6 @@ imageFileList
 -imageListBaseDir
 ./Data/FaceDetection/faceDetectImages_hd/
 
--showWindows
+#-showWindows
 
-#-noWaitKey
+-noWaitKey

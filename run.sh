@@ -225,7 +225,7 @@ else
 		AUG_REALITY_OUTPUT_FILE="aug_${INPUTSIZE}_1.csv"
 		$AUG_REALITY_EXEC $AUG_REALITY_CONFIG_LINE
 		if [ -e $ExecOutputFileName ]; then
-			mv $ExecOutputFileName $RESULTS_DIR/AUG_REALITY_OUTPUT_FILE
+			mv $ExecOutputFileName $RESULTS_DIR/$AUG_REALITY_OUTPUT_FILE
 		else
 			echo "Output file does not exist"
 		fi

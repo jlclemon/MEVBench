@@ -296,7 +296,7 @@ struct FeatureExtractionMultiThreadData : MultiThreadAlgorithmData
 };
 
 void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[]);
-void setupFeatureExtractionConfigFromFile(string filename, FeatureExtractionConfig & featureExtractionConfig);
+void setupFeatureExtractionConfigFromFile(string filename, FeatureExtractionConfig & featureExtractionConfig, vector<string> restOfConfigArgs);
 void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featureExtractionConfig, FeatureExtractionData & featureExtractionData);
 void featureExtractionCreateThreadManager(ThreadManager * &threadManager,int verticalThreads, int horizontalThreads);
 void setFeatureExtractionWorkingThreadDataInGeneralWorkingData(vector<GeneralWorkerThreadData> &genData, vector<struct FeatureExtractionWorkerThreadInfo> & workingThreads);

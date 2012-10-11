@@ -56,7 +56,7 @@ extern "C"
 #endif
 
 
-
+#define TIMING_MAX_NUMBER_OF_THREADS 64
 #ifdef TSC_TIMING
 vector<TSC_VAL_w> fc_timingVector;
 #endif
@@ -3548,7 +3548,7 @@ void parseClassificationConfigCommandVector(FeatureClassificationConfig & featur
 
 }
 
-FeatureClassificationConfig setupFeatureClassificationConfigFromFile(string filename)
+FeatureClassificationConfig setupFeatureClassificationConfigFromFile(string filename, vector<string> restOfArgs)
 {
 	FeatureClassificationConfig featureClassificationConfig;
 
@@ -3556,7 +3556,10 @@ FeatureClassificationConfig setupFeatureClassificationConfigFromFile(string file
 
 
 	loadFeatureClassificationConfigFile(commandArgs, filename);
-
+	for(int i =0; i< restOfArgs.size(); i++)
+	{
+		commandArgs.push_back(restOfArgs[i]);
+	}
 	parseClassificationConfigCommandVector(featureClassificationConfig, commandArgs);
 	return featureClassificationConfig;
 
@@ -4124,8 +4127,14 @@ int featureClassification_testSeperate(int argc, const char * argv[])
 
 	if((commandLineArgs[1].compare("-configFile") ==0) || (commandLineArgs[1].compare("-ConfigFile") ==0))
 	{
+		vector<string> restOfArgs;
+		for(int i = 0; i< commandLineArgs.size(); i++)
+		{
 
-		featureClassificationConfig = setupFeatureClassificationConfigFromFile(commandLineArgs[2]);
+			restOfArgs.push_back(commandLineArgs[i]);
+		}
+
+		featureClassificationConfig = setupFeatureClassificationConfigFromFile(commandLineArgs[2],restOfArgs);
 	}
 	Mat trainDescriptors;
 	Mat trainDescriptorsClasses;
@@ -4243,11 +4252,11 @@ int featureClassification_main(int argc, const char * argv[])
 
 	std::cout << "Feature Classification Mechanism" << std::endl;
 #ifdef TSC_TIMING
-	fc_timingVector.resize(16);
+	fc_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	fc_timeStructVector.resize(16);
-
+	//fc_timeStructVector.resize(16);
+	fc_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 
 #ifdef SPLASH_SCREEN
@@ -4287,7 +4296,23 @@ int featureClassification_main(int argc, const char * argv[])
 
 	if((commandLineArgs[1].compare("-configFile") ==0) || (commandLineArgs[1].compare("-ConfigFile") ==0))
 	{
-		loadFeatureClassificationConfigFile(commandLineArgs, commandLineArgs[2]);
+
+
+
+		vector<string> newCommandLineArgs;
+		vector<string> configFileArgs;
+		loadFeatureClassificationConfigFile(configFileArgs, commandLineArgs[2]);	
+		//loadFeatureClassificationConfigFile(commandLineArgs, commandLineArgs[2]);
+		for(int i =0; i<configFileArgs.size(); i++)
+		{
+			newCommandLineArgs.push_back(configFileArgs[i]);		
+		}
+
+		for(int i =0; i<commandLineArgs.size(); i++)
+		{
+			newCommandLineArgs.push_back(commandLineArgs[i]);		
+		}
+		commandLineArgs = newCommandLineArgs;
 
 
 

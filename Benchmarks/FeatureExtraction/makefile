@@ -19,13 +19,13 @@ CC=g++
 C=gcc
 CCDEBUG=-g 
 CDEBUG=-g 
-CCFLAGS=-c -Wall $(CCDEBUG) -O3 $(XTRA_PARAMS)
-CFLAGS=-c -Wall $(CDEBUG) -O3 $(XTRA_PARAMS)
+CCFLAGS=-c -Wall $(CCDEBUG) -O0 $(XTRA_PARAMS)
+CFLAGS=-c -Wall $(CDEBUG) -O0 $(XTRA_PARAMS)
 LDEBUG=$(CCDEBUG)
 CDEFINES=
 CCDEFINES=
 LLFLAGSBASE= -Wall -o
-LIBSBASE=pthread rt opencv_calib3d opencv_core opencv_features2d opencv_features2d opencv_flann opencv_highgui opencv_imgproc opencv_ml opencv_objdetect opencv_video opencv_nonfree
+LIBSBASE=pthread rt $(XTRA_LIBS) opencv_calib3d opencv_core opencv_features2d opencv_features2d opencv_flann opencv_highgui opencv_imgproc opencv_ml opencv_objdetect opencv_video opencv_nonfree
 #opencv_features2d
 #The lib path for the opencv libraries assuming you don't have a native install
 LIBPATHS=$(OpenCV_DIR)/lib

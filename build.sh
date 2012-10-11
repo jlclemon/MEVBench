@@ -27,8 +27,12 @@
 #
 
 
+if [ -z "$USE_EFFEX" ]; then
+	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall"
+else
+	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall"
+fi
 
-export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall"
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
 export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeStaticInstall"
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
@@ -47,8 +51,29 @@ else
 
 	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING -DOPENCV_2_4"
 fi
+if [ -n "$USE_EFFEX" ]; then
+	echo "$USE_EFFEX Using Effex"
+	export XTRA_LIBS="opencv_effex"
+	export XTRA_PARAMS="$XTRA_PARAMS -DUSE_EFFEX_CMAC -DUSE_EFFEX_OTM -DUSE_EFFEX_TREE -DUSE_EFFEX_MAX -DUSE_CACHE_AND_PREFETCH"
 
-export ARM_XTRA_PARAMS="-DOPENCV_VER_2_3 -DUSE_GEM5 -DCLOCK_GETTIME_TIMING -mno-unaligned-access"
+fi
+
+export ARM_XTRA_PARAMS="-DOPENCV_2_4 -DUSE_GEM5 -DCLOCK_GETTIME_TIMING -mno-unaligned-access"
+#-DOPENCV_VER_2_3
+if [ -n "$USE_EFFEX_INSTR" ]; then
+
+
+	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_DATA_INSTR_CMAC -DUSE_EFFEX_DATA_INSTR_OTM -DUSE_CACHE_AND_PREFETCH_INSTR"
+
+fi
+if [ -n "$USE_EFFEX" ]; then
+
+
+	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_CMAC -DUSE_EFFEX_OTM -DUSE_EFFEX_TREE -DUSE_EFFEX_MAX -DUSE_CACHE_AND_PREFETCH"
+
+fi
+
+
 BASEDIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_ARM="FALSE"
 
@@ -88,79 +113,79 @@ if [ $BUILD_ARM == "FALSE" ]; then
 
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "dynamic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 	    if [ "${1}" == "allVersions" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 
@@ -198,13 +223,13 @@ if [ $BUILD_ARM == "FALSE" ]; then
 
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "AugmentedRealityStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 
@@ -213,52 +238,52 @@ if [ $BUILD_ARM == "FALSE" ]; then
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FaceDetectionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "ObjectRecognition" ]; then
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "ObjectRecognitionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "FeatureClassification" ]; then
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FeatureClassificationStatic" ]; then
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "FeatureExtraction" ]; then
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make clean
-		make "XTRA_PARAMS=$XTRA_PARAMS"
+		make XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FeatureExtractionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_static clean
-		make --file=makefile_static "XTRA_PARAMS=$XTRA_PARAMS"
+		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 
@@ -275,79 +300,79 @@ else
 
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "dynamic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 	    if [ "${1}" == "allVersions" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 
 
@@ -385,13 +410,13 @@ else
 
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "AugmentedRealityStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 
@@ -400,52 +425,52 @@ else
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FaceDetectionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "ObjectRecognition" ]; then
 
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "ObjectRecognitionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "FeatureClassification" ]; then
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FeatureClassificationStatic" ]; then
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 	    if [ "${1}" == "FeatureExtraction" ]; then
 
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm clean
-		make --file=makefile_arm "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
 	    fi
 	    if [ "${1}" == "FeatureExtractionStatic" ]; then
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm_static clean
-		make --file=makefile_arm_static "XTRA_PARAMS=$ARM_XTRA_PARAMS"
+		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 	    fi
 
 

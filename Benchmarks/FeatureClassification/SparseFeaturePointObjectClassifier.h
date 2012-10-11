@@ -57,7 +57,9 @@
 #include "MultiThreadedMatResult.h"
 #include "ThreadManager.h"
 #include "MultiThreadAlgorithmData.h"
-
+#if (defined(USE_EFFEX_CMAC) ||  defined(USE_EFFEX_OTM) ||defined(USE_EFFEX_TREE) || defined(USE_EFFEX_MAX) || defined(USE_CACHE_AND_PREFETCH))
+	#include <opencv2/effex/effex.hpp>
+#endif
 
 using namespace cv;
 using namespace std;

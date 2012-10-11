@@ -1,13 +1,13 @@
 -saveClassificationStruct
-HogSVM
+SiftSVM
 
 #-singleThreaded
 
 -nHoriCores
-2
+4
 
 -nVertCores
-2
+1
 
 -nIterations
 1
@@ -17,7 +17,8 @@ HogSVM
 #-testDesc
 
 -desc
-hog
+sift
+#hog
 #hog
 #sift
 
@@ -37,34 +38,40 @@ linear_svm
 #knn_hess
 
 -queryDescFile
-./Data/FeatureClassification/inria116PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inria256PosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 
 
 -queryDescClassesFile
-./Data/FeatureClassification/inria256PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inria256PosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 
 
 
 -trainDescFile
-./Data/FeatureClassification/inriaCombPosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 
 
 -trainDescClassesFile
-./Data/FeatureClassification/inriaCombPosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 
 
 
 -loadClassificationStruct
-./Data/FeatureClassification/hogPersonInriaAll_SVM.yml
+./Data/FeatureClassification/siftSVM_SVM.yml
+#./Data/FeatureClassification/hogPersonInriaAll_SVM.yml
 #./Data/FeatureClassification/hogPersonInriaAll_Boost.yml
 #./Data/FeatureClassification/hogPersonInriaAll_Boost.yml
 #./Data/FeatureClassification/hogPersonInria1000LimitAutoTrain_SVM.yml
 #test.yml
+
 
 

@@ -284,7 +284,7 @@ typedef void * (*thread_fptr)(void *);
 
 
 //Get the file config
-FeatureClassificationConfig setupFeatureClassificationConfigFromFile(string filename);
+FeatureClassificationConfig setupFeatureClassificationConfigFromFile(string filename, vector<string> restOfConfigArgs);
 
 
 //Generalized

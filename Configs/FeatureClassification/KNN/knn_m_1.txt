@@ -1,5 +1,5 @@
 -saveClassificationStruct
-knnClass
+knnClassSift
 
 #-singleThreaded
 
@@ -17,7 +17,8 @@ knnClass
 #-testDesc
 
 -desc
-hog
+sift
+#hog
 #hog
 #sift
 
@@ -37,25 +38,34 @@ knn_flann
 #knn_hess
 
 -queryDescFile
-./Data/FeatureClassification/inria116PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inria256PosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 
 
 -queryDescClassesFile
-./Data/FeatureClassification/inria116PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inria256PosNeg.yml
 #./Data/FeatureClassification/inriaCombNeg.yml
 
 
 
 -trainDescFile
-./Data/FeatureClassification/inria256PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 
 
 -trainDescClassesFile
-./Data/FeatureClassification/inria256PosNeg.yml
+./Data/FeatureClassification/bookOfficeFilesSIFT1Classes.yml
+#./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaCombPosNeg.yml
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
+
+
+
+#./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
+
 
 

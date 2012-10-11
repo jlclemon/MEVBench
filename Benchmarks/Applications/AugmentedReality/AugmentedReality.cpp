@@ -18,7 +18,7 @@ extern "C"
 }
 #endif
 
-
+#define TIMING_MAX_NUMBER_OF_THREADS 64
 
 //#define TSC_TIMING
 #ifdef TSC_TIMING
@@ -1330,7 +1330,7 @@ int augmentedReality_main(int argc, const char * argv[])
 		{
 			vector<uchar> opticalFlowStatus;
 			vector<float> opticalFlowErr;
-
+			cout << "Calc Opt"  << endl;
 			calcOpticalFlowPyrLK(augmentedRealityData.prevFrame[0], grayScaleFrames[0], augmentedRealityData.prevCorners, augmentedRealityData.trackingCorners, opticalFlowStatus,  opticalFlowErr, Size(15, 15), 3, TermCriteria( TermCriteria::COUNT+TermCriteria::EPS, 30, 0.01), 0.5, 0);
 			int cornersFound = 0;
 			for(unsigned int i =0; i < opticalFlowStatus.size(); i++)
@@ -1538,9 +1538,12 @@ int augmentedReality_main(int argc, const char * argv[])
 int main(int argc, const char * argv[])
 {
 #ifdef TSC_TIMING
-	aug_timingVector.resize(16);
+	aug_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	//fe_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
-
+#ifdef CLOCK_GETTIME_TIMING
+	aug_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+#endif
 
 	return augmentedReality_main(argc, argv);
 

@@ -20,10 +20,10 @@ sift
 0
 
 -nVertCores
-2
+1
 
 -nHoriCores
-4
+10
 
 #-Redistribute
 

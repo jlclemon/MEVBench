@@ -47,7 +47,7 @@ extern "C"
 }
 #endif
 
-
+#define TIMING_MAX_NUMBER_OF_THREADS 64
 //#define TSC_TIMING
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"
@@ -865,11 +865,12 @@ void setupFaceDetectionData(FaceDetectionConfig & faceDetectionConfig, FaceDetec
 int main(int argc, const char * argv[])
 {
 #ifdef TSC_TIMING
-	fd_timingVector.resize(16);
+	fd_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 
-#ifdef TSC_TIMING
-	fd_timingVector.resize(16);
+#ifdef CLOCK_GETTIME_TIMING
+	//fd_timingVector.resize(16);
+	fd_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 
 	return faceDetection_main(argc, argv);

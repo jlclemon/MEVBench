@@ -271,14 +271,28 @@ Point2f SparseFeaturePointObjectClassifier::computeCenterPointOfKeyPoints(vector
 
 	return centerPoint;
 }
-
 float SparseFeaturePointObjectClassifier::calcDistanceBetweenPoints(Point2f start, Point2f end)
 {
+#ifdef USE_EFFEX_CMAC
+	float distBufferA[EFFEX_CMAC_BUFFER_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	float distBufferB[EFFEX_CMAC_BUFFER_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+#endif
+
+
 	float xDiff=0.0, yDiff = 0.0;
 
 	xDiff = end.x -start.x;
 	yDiff = end.y-start.y;
-	return sqrt(xDiff*xDiff + yDiff*yDiff);
+
+	#ifdef USE_EFFEX_CMAC
+		float tmpResult;	
+		distBufferA[0] = xDiff;
+		distBufferA[1] = yDiff;
+		effexCmacOpFloat(distBufferA, distBufferA, tmpResult, EFFEX_CMAC_BUFFER_SIZE);
+		return sqrt(tmpResult);
+	#else
+		return sqrt(xDiff*xDiff + yDiff*yDiff);
+	#endif
 }
 
 float SparseFeaturePointObjectClassifier::makeVectorAngleRelativeToFeatureAngle(float vectorAngle, float featureAngle)
@@ -635,6 +649,7 @@ void SparseFeaturePointObjectClassifier::computeBinIndices(Point2f location, Vec
 	int numberOfScaleBins = 10;   //Factor of 2 bins defined below
 	int numberOfOrientationBins = 360/30;  //30 degree bins (12 bins)
 	float orientationBinWidth = 30;
+	const float orientationBinWidthInv = 1/30;
 	float xBinRanges[97] = {0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620,630,640,650,660,670,680,690,700,710,720,730,740,750,760,770,780,790,800,810,820,830,840,850,860,870,880,890,900,910,920,930,940,950,960};
 	float yBinRanges[73] = {0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620,630,640,650,660,670,680,690,700,710,720};
 
@@ -645,8 +660,8 @@ void SparseFeaturePointObjectClassifier::computeBinIndices(Point2f location, Vec
 //	float yBinRanges[25] = {0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240};
 
 
-	float scaleBinRanges[] = {0.0f, .0078125f, .015625f, .03125f,.0625f,.125f,.25f,.50f, 1.0f,2.0f,4.0f};
-	float orientationBinRanges[] = {0.0, 30, 60, 90,120,150,180,210, 240,270,300,330,360};
+	float scaleBinRanges[] = {0.0f, .0078125f, .015625f, .03125f,.0625f,.125f,.25f,.50f, 1.0f,2.0f,4.0f,FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
+	float orientationBinRanges[] = {0.0, 30, 60, 90,120,150,180,210, 240,270,300,330,360,FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
 
 /*
 	if(location.x >= xBinRanges[0])
@@ -721,11 +736,19 @@ void SparseFeaturePointObjectClassifier::computeBinIndices(Point2f location, Vec
 
 	}
 
+
+
 	if(scaleAndOrientation[1] < orientationBinRanges[numberOfOrientationBins] && scaleAndOrientation[1] >= orientationBinRanges[0])
 	{
 
+	#ifdef USE_EFFEX_OTM
+		effexOtmOpFloat(&scaleAndOrientation[1], orientationBinRanges, orientationIndex[0], EFFEX_OTM_BUFFER_SIZE);
+		orientationIndex[0]--;
+		if(scaleAndOrientation[1]*orientationBinWidthInv - orientationIndex[0] >=.5)
+	#else
 		orientationIndex[0] = (int) (scaleAndOrientation[1]/orientationBinWidth);
 		if(scaleAndOrientation[1]/orientationBinWidth - orientationIndex[0] >=.5)
+	#endif
 		{
 			if(orientationIndex[0]+1 < numberOfOrientationBins)
 			{
@@ -756,6 +779,28 @@ void SparseFeaturePointObjectClassifier::computeBinIndices(Point2f location, Vec
 	if(scaleAndOrientation[0] >= scaleBinRanges[0] && scaleAndOrientation[0] < scaleBinRanges[numberOfScaleBins])
 	{
 
+	#ifdef USE_EFFEX_OTM
+		effexOtmOpFloat(&scaleAndOrientation[0], scaleBinRanges, scaleIndex[0], EFFEX_OTM_BUFFER_SIZE);
+		scaleIndex[0]--;
+		if(scaleAndOrientation[0]>=(scaleBinRanges[scaleIndex[0]] + .5 *(scaleBinRanges[scaleIndex[0]+1]-scaleBinRanges[scaleIndex[0]]) ))
+		{
+			if((scaleIndex[0]+2) < numberOfScaleBins)
+			{
+				scaleIndex[1] = scaleIndex[0]+1;
+			}
+		}
+		else
+		{
+			if((scaleIndex[0]+1)>=2)
+			{
+				scaleIndex[1] = scaleIndex[0]-1;
+			}
+
+		}
+
+
+	#else
+
 		for(int i = 1; i < numberOfScaleBins+1; i++)
 		{
 			if(scaleAndOrientation[0] < scaleBinRanges[i])
@@ -781,6 +826,8 @@ void SparseFeaturePointObjectClassifier::computeBinIndices(Point2f location, Vec
 				break;
 			}
 		}
+
+	#endif
 	}
 
 
@@ -904,6 +951,12 @@ void SparseFeaturePointObjectClassifier::houghBinTheRemappedVectors(vector<Hough
 
 float SparseFeaturePointObjectClassifier::computeSqErrorForHoughBin(Mat & computedTransform,vector<int> & pointIndicesForTransform, int & numberOfValidPointsInBin,const HoughBin & bin, const vector<KeyPoint> & newKeypoints,const vector<KeyPoint> & origKeypoints)
 {
+#ifdef USE_EFFEX_CMAC
+	float errBufferA[EFFEX_CMAC_BUFFER_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	float errBufferB[EFFEX_CMAC_BUFFER_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+#endif
+
+
 	vector<int> currentBinPointIndices(bin.count);
 	bool done = false;
 	bool found = false;
@@ -952,7 +1005,17 @@ float SparseFeaturePointObjectClassifier::computeSqErrorForHoughBin(Mat & comput
 		for(int i = 0; i<newPointsFromXformMat.rows;i++)
 		{
 
+		#ifdef USE_EFFEX_CMAC
+			
+			errBufferA[0] = (newPointsFromXformMat.at<float>(i,0) - newPointsMat.at<float>(i,0));
+			errBufferA[1] = (newPointsFromXformMat.at<float>(i,1) - newPointsMat.at<float>(i,1));
+			effexCmacOpFloat(errBufferA, errBufferA, currentSquareError, EFFEX_CMAC_BUFFER_SIZE);
+
+		#else
+
+
 			currentSquareError = ((newPointsFromXformMat.at<float>(i,0) - newPointsMat.at<float>(i,0)) * (newPointsFromXformMat.at<float>(i,0) - newPointsMat.at<float>(i,0))) + ((newPointsFromXformMat.at<float>(i,1) - newPointsMat.at<float>(i,1)) * (newPointsFromXformMat.at<float>(i,1) - newPointsMat.at<float>(i,1)));
+		#endif
 			totalSquareError += currentSquareError;
 //			cout << "Sqr Error: " << currentSquareError << endl;
 			/*if(currentSquareError > 100)

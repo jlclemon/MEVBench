@@ -49,7 +49,10 @@ extern "C"
 
 #endif
 //#define CLOCK_GETTIME_TIMING
+#define TIMING_MAX_NUMBER_OF_THREADS 64
+
 #ifdef CLOCK_GETTIME_TIMING
+
 #include "time.h"
 #ifndef GET_TIME_WRAPPER
 #define GET_TIME_WRAPPER(dataStruct) clock_gettime(CLOCK_THREAD_CPUTIME_ID, &dataStruct)
@@ -1298,7 +1301,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 
 			cout << "User key id recieved: " << (char)key << endl;
 
-			if(key == 's')
+			if(key == 's'  || !featureExtractionConfig.descOutputFilename.empty())
 			{
 				stringstream stringBuffer;
 				stringBuffer.str("");
@@ -1414,7 +1417,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 			}
 	}
 
-
+	//pthread_exit(NULL);
 
 }
 
@@ -1601,14 +1604,16 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 
 }
 
-void setupFeatureExtractionConfigFromFile(string filename, FeatureExtractionConfig & featureExtractionConfig)
+void setupFeatureExtractionConfigFromFile(string filename, FeatureExtractionConfig & featureExtractionConfig, vector<string> restOfConfigArgs)
 {
 	vector<string> configArgs;
 	loadFeatureExtractionConfigFile(configArgs, filename);
+	for(int i=0; i<restOfConfigArgs.size(); i++)
+	{
+		
+		configArgs.push_back(restOfConfigArgs[i]);
 
-
-
-
+	}
 
 
 	parseClassificationConfigCommandVector(featureExtractionConfig, configArgs);
@@ -2418,6 +2423,7 @@ void featureExtractionHandleFeatureExtractionCoordinator(struct GeneralWorkerThr
 
 void  featureExtractionCoordinatorThreadFunctionStandAlone(struct GeneralWorkerThreadData * genData,void * workerThreadStruct)
 {
+
 	struct FeatureExtractionWorkerThreadInfo * workerThreadInfo = reinterpret_cast<FeatureExtractionWorkerThreadInfo *> (workerThreadStruct);
 	Thread * myThread = genData->myThread;
 	struct FeatureExtractionMultiThreadData * myMultiThreadExtractionData = reinterpret_cast<FeatureExtractionMultiThreadData *>(workerThreadInfo->multiThreadAlgorithmData);
@@ -2446,6 +2452,7 @@ void  featureExtractionCoordinatorThreadFunctionStandAlone(struct GeneralWorkerT
 	featureExtractionHandleFeatureExtractionCoordinator(genData,workerThreadInfo);
 
 	myThread->waitAtBarrier();
+	//pthread_exit(NULL);
 #ifdef VERBOSE_DEBUG
 	cout<< "Feature Extraction Complete" << endl;
 	//featureExtractionHandleFeatureExtractionCoordinator(genData,workerThreadInfo);
@@ -2477,7 +2484,7 @@ void  featureExtractionWorkerThreadFunctionStandAlone(struct GeneralWorkerThread
 	featureExtractionHandleFeatureExtractionWorker(genData,workerThreadInfo);
 
 	myThread->waitAtBarrier();
-
+	//pthread_exit(NULL);
 	//featureExtractionHandleFeatureExtractionWorker(genData,workerThreadInfo);
 
 
@@ -2559,6 +2566,7 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()]);
 #endif
 	featureExtractionCoordinatorThreadFunctionStandAlone(genData,genData->featureExtractionData);
+
 #ifdef USE_MARSS
 	ptlcall_kill();
 #endif
@@ -2582,6 +2590,7 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 
 
 	return NULL;
+	//pthread_exit(NULL);
 }
 
 
@@ -2596,6 +2605,7 @@ void * featureExtraction_testWorkerThreadStandAlone(void * threadParam)
 	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()]);
 #endif
 	featureExtractionWorkerThreadFunctionStandAlone(genData,genData->featureExtractionData);
+
 #ifdef TSC_TIMING
 	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[(genData->myThread->getThreadLogicalId() + fe_timingVector.size()/2)] );
 #endif
@@ -2603,6 +2613,8 @@ void * featureExtraction_testWorkerThreadStandAlone(void * threadParam)
 	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ fe_timeStructVector.size()/2]);
 #endif
 	return NULL;
+	//pthread_exit(NULL);
+
 }
 
 
@@ -3221,8 +3233,14 @@ void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])
 	// TODO Here
 	if((commandLineArgs[1].compare("-configFile") ==0) || (commandLineArgs[1].compare("-ConfigFile") ==0))
 	{
+		vector<string> restOfArgs;
+		for(int i = 0; i< commandLineArgs.size(); i++)
+		{
+			restOfArgs.push_back(commandLineArgs[i]);
 
-		setupFeatureExtractionConfigFromFile(commandLineArgs[2],featureExtractionConfig );
+		}
+
+		setupFeatureExtractionConfigFromFile(commandLineArgs[2],featureExtractionConfig,restOfArgs);
 	}
 
 
@@ -3275,7 +3293,7 @@ void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])
 
 
 	cout << "Multithreaded App complete" << endl;
-
+	//pthread_exit(NULL);
 
 }
 
@@ -3360,9 +3378,20 @@ int main(int argc, const char * argv[])
 
 	if((commandLineArgs[1].compare("-configFile") ==0) || (commandLineArgs[1].compare("-ConfigFile") ==0))
 	{
-		loadFeatureExtractionConfigFile(commandLineArgs, commandLineArgs[2]);
+		vector<string> newCommandLineArgs;
+		vector<string> configFileArgs;
+		loadFeatureExtractionConfigFile(configFileArgs, commandLineArgs[2]);	
+		//loadFeatureExtractionConfigFile(commandLineArgs, commandLineArgs[2]);
+		for(int i =0; i<configFileArgs.size(); i++)
+		{
+			newCommandLineArgs.push_back(configFileArgs[i]);		
+		}
 
-
+		for(int i =0; i<commandLineArgs.size(); i++)
+		{
+			newCommandLineArgs.push_back(commandLineArgs[i]);		
+		}
+		commandLineArgs = newCommandLineArgs;
 
 	}
 
@@ -3371,10 +3400,10 @@ int main(int argc, const char * argv[])
 
 
 #ifdef TSC_TIMING
-	fe_timingVector.resize(16);
+	fe_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	fe_timeStructVector.resize(16);
+	fe_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 
 #endif
 	if(featureExtractionConfig.singleThreaded ==false)
@@ -3385,8 +3414,10 @@ int main(int argc, const char * argv[])
 		fe_writeTimingToFile(fe_timingVector);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
+		cout << "Writing Data" << endl;
 		fe_writeTimingToFile(fe_timeStructVector);
 #endif
+		pthread_exit(NULL);
 		return 0;
 	}
 
@@ -3579,6 +3610,7 @@ int getNextImages(vector<Mat>&  images,FeatureExtractionConfig & featureExtracti
 #ifdef VERBOSE_DEBUG
 				cout << "Loaded image: "<<imageFullName << endl;
 #endif
+				
 				imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA] = imread(imageFullName,1);
 				if(images.size() >= 1)
 				{

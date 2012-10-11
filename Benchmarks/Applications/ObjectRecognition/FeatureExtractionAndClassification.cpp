@@ -63,7 +63,7 @@ extern "C"
 #endif
 
 
-
+#define TIMING_MAX_NUMBER_OF_THREADS 64
 
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"
@@ -322,7 +322,7 @@ void * workerThreadFunction(void * threadParam)
 
 
 }
-void parseConfigCommandVector(FeatureExtractionAndClassificationConfig & config, vector<string> & commandStringVector)
+void parseConfigCommandVector(FeatureExtractionAndClassificationConfig & config, vector<string> & commandStringVector, vector <string> &extractionExtraParams, vector<string>  &classificationExtraParams)
 {
 
 
@@ -375,6 +375,44 @@ void parseConfigCommandVector(FeatureExtractionAndClassificationConfig & config,
 			config.noWaitKey = true;
 
 		}
+		if(!it_current->compare("-extractXtraParams") || !it_current->compare("-ExtractXtraParams"))
+		{
+			vector<string> xtraParamsVec;
+			string extraParams =*(it_current+1);
+			char currentString[120];
+			strcpy(currentString, extraParams.c_str());
+			char * currentTokPointer = strtok(currentString,",");
+
+			while(currentTokPointer != NULL)
+			{
+				string currentNewString(currentTokPointer);
+				xtraParamsVec.push_back(currentNewString);
+				currentTokPointer = strtok(NULL,",");
+			}
+
+			extractionExtraParams = xtraParamsVec;
+		}
+
+		if(!it_current->compare("-classifyXtraParams") || !it_current->compare("-ClassifyXtraParams"))
+		{
+			vector<string> xtraParamsVec;
+			string extraParams  =*(it_current+1);
+			char currentString[120];
+			strcpy(currentString, extraParams.c_str());
+			char * currentTokPointer = strtok(currentString,",");
+
+			while(currentTokPointer != NULL)
+			{
+				string currentNewString(currentTokPointer);
+				xtraParamsVec.push_back(currentNewString);
+				currentTokPointer = strtok(NULL,",");
+			}
+
+			classificationExtraParams = xtraParamsVec;
+
+
+		}
+
 
 
 	}
@@ -406,14 +444,17 @@ void runMultiThreadedFeatureExtractionAndClassification(int argc, const char * a
 
 
 	FeatureExtractionAndClassificationConfig  config;
-	parseConfigCommandVector(config, commandLineArgs);
+	vector <string> extractionExtraParams;
+	vector <string> classificationExtraParams;
+
+	parseConfigCommandVector(config, commandLineArgs,extractionExtraParams, classificationExtraParams);
 
 	FeatureExtractionConfig featureExtractionConfig;
 	FeatureClassificationConfig featureClassificationConfig;
 
 
-	setupFeatureExtractionConfigFromFile(config.featureExtractionConfigFile,featureExtractionConfig );
-	featureClassificationConfig = setupFeatureClassificationConfigFromFile(config.featureClassificationConfigFile);
+	setupFeatureExtractionConfigFromFile(config.featureExtractionConfigFile,featureExtractionConfig,extractionExtraParams);
+	featureClassificationConfig = setupFeatureClassificationConfigFromFile(config.featureClassificationConfigFile,classificationExtraParams);
 
 	//They need to have the same number of threads
 	featureClassificationConfig.numberOfHorizontalProcs = featureExtractionConfig.numberOfHorizontalProcs;
@@ -644,11 +685,11 @@ int main (int argc, const char * argv[])
 
 	cout << "Hello world" << endl;
 #ifdef TSC_TIMING
-	fec_timingVector.resize(16);
+	fec_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	fec_timeStructVector.resize(16);
-
+	//fec_timeStructVector.resize(16);
+	fec_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 
 	internalCallToTestExtractionAlone(argc,argv,false);

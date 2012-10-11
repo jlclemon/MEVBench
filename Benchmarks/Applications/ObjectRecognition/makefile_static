@@ -33,7 +33,7 @@ LIBSUPPORT_FFMPEG= swscale avdevice avformat avcodec avutil
 LIB3PARTY= libjasper libtiff zlib libpng libjpeg unicap  
 #jasper tiff opencv_lapack zlib png jpeg unicap  
 #v4l2 v4lconvert v4l1 
-LIBSBASE= opencv_highgui opencv_ml opencv_objdetect opencv_video opencv_calib3d opencv_flann opencv_features2d opencv_imgproc opencv_nonfree opencv_core $(LIB3PARTY) $(LIBSUPPORT_FFMPEG) rt pthread
+LIBSBASE= opencv_highgui opencv_ml opencv_objdetect opencv_video opencv_calib3d opencv_flann opencv_features2d opencv_imgproc opencv_nonfree $(XTRA_LIBS) opencv_core $(LIB3PARTY) $(LIBSUPPORT_FFMPEG) rt pthread
 #The lib path for the opencv libraries assuming you don't have a native install
 LIBPATHS=$(OpenCV_STATIC_DIR)/lib $(OpenCV_STATIC_DIR)/share/OpenCV/3rdparty/lib
 HEADERPATH=

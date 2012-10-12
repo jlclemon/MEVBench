@@ -67,5 +67,16 @@ knn_flann
 
 #./Data/FeatureClassification/inriaComb1000LimitedPosNeg.yml
 
+#-imageChunksActive
+
+
+#-offsetIntoChunks
+#1
+
+#-numberOfChunksForSimulation
+#2
+
+#-totalNumberOfChunks
+#4
 
 

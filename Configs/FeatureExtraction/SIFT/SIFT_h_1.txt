@@ -35,3 +35,20 @@ H_list.txt
 
 -imageListBaseDir
 ./Data/FeatureExtraction/ProbBook_hd/
+#./Data/FeatureExtraction/Office/
+
+#-imageChunksActive
+
+
+#-offsetIntoChunks
+#1
+
+#-numberOfChunksForSimulation
+#2
+
+#-totalNumberOfChunks
+#4
+
+
+
+

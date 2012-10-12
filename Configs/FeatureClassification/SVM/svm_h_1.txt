@@ -73,5 +73,16 @@ linear_svm
 #./Data/FeatureClassification/hogPersonInria1000LimitAutoTrain_SVM.yml
 #test.yml
 
+#-imageChunksActive
+
+
+#-offsetIntoChunks
+#1
+
+#-numberOfChunksForSimulation
+#2
+
+#-totalNumberOfChunks
+#4
 
 

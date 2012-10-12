@@ -371,6 +371,37 @@ Mat loadQueryDescriptorClasses(FeatureClassificationConfig & featureClassificati
 	descriptorClasses = loadDescriptorClasses(featureClassificationConfig.queryDescriptorsClassesFile, descriptorClassesInfo);
 	cout << "Descriptor Classes Info: " << descriptorClassesInfo<< endl;
 
+	//cout <<"Number of Descriptors: "<<descriptorClasses.rows <<endl;;	
+	int numberOfEntries = descriptorClasses.rows;
+	if(featureClassificationConfig.chunksActive)
+	{
+
+		int chunkEndRow =0;
+		int sizeOfChunk = numberOfEntries /featureClassificationConfig.totalNumberOfChunks;
+		int chunkStartRow = (sizeOfChunk* featureClassificationConfig.offsetIntoNumberOfChunks);
+		if((featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation) >= featureClassificationConfig.totalNumberOfChunks)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		else
+		{
+			chunkEndRow = (featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation)* sizeOfChunk;		
+		}
+
+		if(chunkEndRow > numberOfEntries)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		if(chunkStartRow < 0)
+		{
+			chunkStartRow =  0;
+		}
+		Mat newDescriptorClass = descriptorClasses.rowRange(chunkStartRow,chunkEndRow);
+		descriptorClasses = newDescriptorClass;
+
+	}
+	cout <<"Number of Descriptor Classes: "<<descriptorClasses.rows <<endl;;	
+
 	return descriptorClasses;
 }
 
@@ -408,7 +439,36 @@ Mat loadQueryDescriptors(FeatureClassificationConfig & featureClassificationConf
 		exit(0);
 	}
 
+	int numberOfEntries = descriptors.rows;
+	//cout <<"Number of Descriptors: "<<descriptors.rows <<endl;;	
+	if(featureClassificationConfig.chunksActive)
+	{
 
+		int chunkEndRow =0;
+		int sizeOfChunk = numberOfEntries /featureClassificationConfig.totalNumberOfChunks;
+		int chunkStartRow = (sizeOfChunk* featureClassificationConfig.offsetIntoNumberOfChunks);
+		if((featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation) >= featureClassificationConfig.totalNumberOfChunks)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		else
+		{
+			chunkEndRow = (featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation)* sizeOfChunk;		
+		}
+
+		if(chunkEndRow > numberOfEntries)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		if(chunkStartRow < 0)
+		{
+			chunkStartRow =  0;
+		}
+		Mat newDescriptors = descriptors.rowRange(chunkStartRow,chunkEndRow);
+		descriptors = newDescriptors;
+
+	}
+	cout <<"Number of Descriptors: "<<descriptors.rows <<endl;;
 
 	return descriptors;
 }
@@ -472,7 +532,48 @@ vector<KeyPoint> loadQueryKeypoints(FeatureClassificationConfig & featureClassif
 {
 	string keyPointInfo;
 	string keyPointInfoName;
-	return loadKeyPoints(featureClassificationConfig.keyPointQueryFilename, "Keypoints", keyPointInfoName, keyPointInfo);
+	vector<KeyPoint> keypoints;
+	
+	keypoints = loadKeyPoints(featureClassificationConfig.keyPointQueryFilename, "Keypoints", keyPointInfoName, keyPointInfo);
+	int numberOfEntries = keypoints.size();
+	if(featureClassificationConfig.chunksActive)
+	{
+
+		int chunkEndRow =0;
+		int sizeOfChunk = numberOfEntries /featureClassificationConfig.totalNumberOfChunks;
+		int chunkStartRow = (sizeOfChunk* featureClassificationConfig.offsetIntoNumberOfChunks);
+		if((featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation) >= featureClassificationConfig.totalNumberOfChunks)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		else
+		{
+			chunkEndRow = (featureClassificationConfig.offsetIntoNumberOfChunks +featureClassificationConfig.numberOfChunksForSimulation)* sizeOfChunk;		
+		}
+
+		if(chunkEndRow > numberOfEntries)
+		{
+			chunkEndRow = numberOfEntries;				
+		}
+		if(chunkStartRow < 0)
+		{
+			chunkStartRow =  0;
+		}
+		vector<KeyPoint> newKeypoints;
+		for(int i = chunkStartRow; i < chunkEndRow; i++)
+		{
+			newKeypoints.push_back(keypoints[i]);
+			
+		}
+		
+
+		keypoints = newKeypoints;
+
+	}
+	//cout <<"Number of Keypoints: "<<keypoints.size() <<endl;;
+	
+	
+	return keypoints;
 
 }
 
@@ -3274,6 +3375,12 @@ void parseClassificationConfigCommandVector(FeatureClassificationConfig & featur
 	featureClassificationConfig.partialCopyOfClassificationStruct = false;
 	featureClassificationConfig.numberOfIterations = CLASSIFICATION_DEFAULT_NUMBER_OF_ITERATIONS;
 
+	featureClassificationConfig.totalNumberOfChunks = 1;
+	featureClassificationConfig.offsetIntoNumberOfChunks = 0;
+	featureClassificationConfig.numberOfChunksForSimulation = featureClassificationConfig.totalNumberOfChunks;
+	featureClassificationConfig.chunksActive = false;
+
+
 	//-desc sift -match knn_flann -classify linear_svm -queryDescFile test.yml -trainDescFile test.yml -loadClassificationStruct test.yml -loadMatchStruct test.yml
 	for(it_current=it_start; it_current!=it_end; ++it_current)
 	{
@@ -3523,7 +3630,47 @@ void parseClassificationConfigCommandVector(FeatureClassificationConfig & featur
 			featureClassificationConfig.queryImageFilename = *(it_current+1);
 		}
 
+		if((it_current->compare("-totalNumberOfChunks")==0) || (it_current->compare("-TotalNumberOfChunks")==0))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << *(it_current+1);
+			if((stringBuffer >> featureClassificationConfig.totalNumberOfChunks).fail())
+			{
+				cout << "Chunks Total could not be parsed." << endl;
+			}
+			cout << "Total Number Of Chunks Set: " << featureClassificationConfig.totalNumberOfChunks << endl;
 
+		}
+		if((it_current->compare("-offsetIntoChunks")==0) || (it_current->compare("-OffsetIntoChunks")==0))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << *(it_current+1);
+			if((stringBuffer >> featureClassificationConfig.offsetIntoNumberOfChunks).fail())
+			{
+				cout << "Chunks Offset could not be parsed." << endl;
+			}
+			cout << "Offset Of Chunks Set: " << featureClassificationConfig.offsetIntoNumberOfChunks << endl;
+
+		}
+		if((it_current->compare("-numberOfChunksForSimulation")==0) || (it_current->compare("-NumberOfChunksForSimulation")==0))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << *(it_current+1);
+			if((stringBuffer >> featureClassificationConfig.numberOfChunksForSimulation).fail())
+			{
+				cout << "Chunks for this simulation could not be parsed" << endl;
+			}
+			cout << "Number Of Chunks for Simulation Set: " << featureClassificationConfig.numberOfChunksForSimulation << endl;
+		}
+		if((it_current->compare("-imageChunksActive")==0) || (it_current->compare("-ImageChunksActive")==0))
+		{
+			featureClassificationConfig.chunksActive = true;
+			cout << "Chunks Active" <<  endl;
+
+		}
 
 	}
 

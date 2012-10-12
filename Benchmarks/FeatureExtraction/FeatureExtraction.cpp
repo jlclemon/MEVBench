@@ -69,7 +69,7 @@ vector<TSC_VAL_w> fe_timingVector;
 vector<struct timespec> fe_timeStructVector;
 #endif
 
-
+#define CHUNK_BUFFER_AMOUNT 64
 //#define DEBUG_OUTPUT
 static const double pi = 3.14159265358979323846;
 
@@ -278,6 +278,13 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 	featureExtractionConfig.maxLoops =10;
 	featureExtractionConfig.outOfImages = false;
 
+
+	featureExtractionConfig.totalNumberOfChunks = 1;
+	featureExtractionConfig.offsetIntoNumberOfChunks = 0;
+	featureExtractionConfig.numberOfChunksForSimulation = featureExtractionConfig.totalNumberOfChunks;
+	featureExtractionConfig.chunksActive = false;
+
+
 	featureExtractionConfig.sameLocalAndDesc = true;
 	stringstream stringBuffer("");
 
@@ -391,6 +398,7 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 		if(!commandStringVector[i].compare("-nImages"))
 		{
 			stringBuffer.str("");
+			stringBuffer.clear();			
 			stringBuffer << commandStringVector[i+1];
 			if((stringBuffer >> featureExtractionConfig.numberOfImages).fail())
 			{
@@ -407,6 +415,7 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 		if(!commandStringVector[i].compare("-leftCamera") || !commandStringVector[i].compare("-LeftCamera"))
 		{
 			stringBuffer.str("");
+			stringBuffer.clear();			
 			stringBuffer << commandStringVector[i+1];
 			if((stringBuffer >> featureExtractionConfig.leftCameraId).fail())
 			{
@@ -417,6 +426,7 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 		if(!commandStringVector[i].compare("-rightCamera") || !commandStringVector[i].compare("-RightCamera"))
 		{
 			stringBuffer.str("");
+			stringBuffer.clear();			
 			stringBuffer << commandStringVector[i+1];
 			if((stringBuffer >> featureExtractionConfig.rightCameraId).fail())
 			{
@@ -432,6 +442,7 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 		if(!commandStringVector[i].compare("-imageStartId") || !commandStringVector[i].compare("-ImageStartId"))
 		{
 			stringBuffer.str("");
+			stringBuffer.clear();			
 			stringBuffer << commandStringVector[i+1];
 			if((stringBuffer >> featureExtractionConfig.imageId).fail())
 			{
@@ -439,6 +450,51 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 			}
 
 		}
+		if(!commandStringVector[i].compare("-totalNumberOfChunks") || !commandStringVector[i].compare("-TotalNumberOfChunks"))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << commandStringVector[i+1];
+			if((stringBuffer >> featureExtractionConfig.totalNumberOfChunks).fail())
+			{
+				cout << "Chunks Total could not be parsed." << endl;
+			}
+			cout << "Total Number Of Chunks Set: " << featureExtractionConfig.totalNumberOfChunks << endl;
+
+		}
+		if(!commandStringVector[i].compare("-offsetIntoChunks") || !commandStringVector[i].compare("-OffsetIntoChunks"))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << commandStringVector[i+1];
+			if((stringBuffer >> featureExtractionConfig.offsetIntoNumberOfChunks).fail())
+			{
+				cout << "Chunks Offset could not be parsed." << endl;
+			}
+			cout << "Offset Of Chunks Set: " << featureExtractionConfig.offsetIntoNumberOfChunks << endl;
+
+		}
+		if(!commandStringVector[i].compare("-numberOfChunksForSimulation") || !commandStringVector[i].compare("-NumberOfChunksForSimulation"))
+		{
+			stringBuffer.str("");
+			stringBuffer.clear();
+			stringBuffer << commandStringVector[i+1];
+			if((stringBuffer >> featureExtractionConfig.numberOfChunksForSimulation).fail())
+			{
+				cout << "Chunks for this simulation could not be parsed" << endl;
+			}
+			cout << "Number Of Chunks for Simulation Set: " << featureExtractionConfig.numberOfChunksForSimulation << endl;
+		}
+		if(!commandStringVector[i].compare("-imageChunksActive") || !commandStringVector[i].compare("-ImageChunksActive"))
+		{
+			featureExtractionConfig.chunksActive = true;
+			cout << "Chunks Active" <<  endl;
+
+		}
+
+
+
+
 
 		if(!commandStringVector[i].compare("-imagePath") || !commandStringVector[i].compare("-ImagePath"))
 		{
@@ -611,6 +667,14 @@ void parseClassificationConfigCommandVector(FeatureExtractionConfig & featureExt
 
 		featureExtractionConfig.sameLocalAndDesc = false;
 	}
+
+	if(featureExtractionConfig.totalNumberOfChunks !=1 || (featureExtractionConfig.numberOfChunksForSimulation != featureExtractionConfig.totalNumberOfChunks))
+	{
+		
+		featureExtractionConfig.chunksActive = true;		
+		cout << "Chunks Active" <<  endl;		
+	}
+
 
 
 }
@@ -1458,6 +1522,55 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 
 				featureExtractionData.inputImagesPerFrame->push_back(vectorLeftFrame);
 				featureExtractionData.inputImagesPerFrame->push_back(vectorRightFrame);
+
+				if(featureExtractionConfig.chunksActive)
+				{
+					int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
+					int chunkStartCol;  
+					int chunkEndCol;  
+					int chunkStartRow = 0;
+					int chunkEndRow = leftFrame.rows;
+
+					int chunkWidth = (leftFrame.cols/featureExtractionConfig.totalNumberOfChunks );	
+					
+
+
+					chunkStartCol = (chunkWidth* featureExtractionConfig.offsetIntoNumberOfChunks) -chunkBufferAmount;
+
+								
+								
+					if((featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation) >= featureExtractionConfig.totalNumberOfChunks)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					else
+					{
+						chunkEndCol = (featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation)* chunkWidth +chunkBufferAmount			;		
+					}
+					if(chunkEndCol > leftFrame.cols)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					if(chunkStartCol < 0)
+					{
+						chunkStartCol =  0;
+					}
+					if(chunkEndRow > leftFrame.rows)
+					{
+						chunkEndRow = leftFrame.rows;				
+					}
+					if(chunkStartRow < 0)
+					{
+						chunkStartRow =  0;
+					}
+					
+					
+
+					Mat newImageRegion0 = leftFrame(Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+					leftFrame = newImageRegion0;
+
+				}
+
 				featureExtractionConfig.frameSize = leftFrame.size();
 				featureExtractionData.frameSize = leftFrame.size();
 			}
@@ -1487,6 +1600,57 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 				}
 
 				Mat leftFrame = imread(featureExtractionConfig.imageList[0]);
+
+				if(featureExtractionConfig.chunksActive)
+				{
+					int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
+					int chunkStartCol;  
+					int chunkEndCol;  
+					int chunkStartRow = 0;
+					int chunkEndRow = leftFrame.rows;
+
+					int chunkWidth = (leftFrame.cols/featureExtractionConfig.totalNumberOfChunks );	
+					
+
+
+					chunkStartCol = (chunkWidth* featureExtractionConfig.offsetIntoNumberOfChunks) -chunkBufferAmount;
+
+								
+								
+					if((featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation) >= featureExtractionConfig.totalNumberOfChunks)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					else
+					{
+						chunkEndCol = (featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation)* chunkWidth +chunkBufferAmount			;		
+					}
+					if(chunkEndCol > leftFrame.cols)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					if(chunkStartCol < 0)
+					{
+						chunkStartCol =  0;
+					}
+					if(chunkEndRow > leftFrame.rows)
+					{
+						chunkEndRow = leftFrame.rows;				
+					}
+					if(chunkStartRow < 0)
+					{
+						chunkStartRow =  0;
+					}
+					
+					
+
+					Mat newImageRegion0 = leftFrame(Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+					leftFrame = newImageRegion0;
+
+				}
+
+
+
 				featureExtractionConfig.frameSize = leftFrame.size();
 				featureExtractionData.frameSize = leftFrame.size();
 
@@ -1513,6 +1677,57 @@ void featureExtractionSetupFeatureExtractionData(FeatureExtractionConfig & featu
 
 
 				featureExtractionData.inputImagesPerFrame->push_back(vectorLeftFrame);
+
+				if(featureExtractionConfig.chunksActive)
+				{
+					int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
+					int chunkStartCol;  
+					int chunkEndCol;  
+					int chunkStartRow = 0;
+					int chunkEndRow = leftFrame.rows;
+
+					int chunkWidth = (leftFrame.cols/featureExtractionConfig.totalNumberOfChunks );	
+					
+
+
+					chunkStartCol = (chunkWidth* featureExtractionConfig.offsetIntoNumberOfChunks) -chunkBufferAmount;
+
+								
+								
+					if((featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation) >= featureExtractionConfig.totalNumberOfChunks)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					else
+					{
+						chunkEndCol = (featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation)* chunkWidth +chunkBufferAmount			;		
+					}
+					if(chunkEndCol > leftFrame.cols)
+					{
+						chunkEndCol = leftFrame.cols;				
+					}
+					if(chunkStartCol < 0)
+					{
+						chunkStartCol =  0;
+					}
+					if(chunkEndRow > leftFrame.rows)
+					{
+						chunkEndRow = leftFrame.rows;				
+					}
+					if(chunkStartRow < 0)
+					{
+						chunkStartRow =  0;
+					}
+					
+					
+
+					Mat newImageRegion0 = leftFrame(Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+					leftFrame = newImageRegion0;
+
+				}
+
+
+
 
 				featureExtractionData.frameSize = leftFrame.size();
 				featureExtractionConfig.frameSize = leftFrame.size();
@@ -3630,9 +3845,63 @@ int getNextImages(vector<Mat>&  images,FeatureExtractionConfig & featureExtracti
 
 				}
 
-				featureExtractionConfig.frameSize = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].size();
-//				featureExtractionData.frameSize = leftFrame.size();
+				if(featureExtractionConfig.chunksActive)
+				{
+					int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
+					int chunkStartCol;  
+					int chunkEndCol;  
+					int chunkStartRow = 0;
+					int chunkEndRow = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].rows;
 
+					int chunkWidth = (imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].cols/featureExtractionConfig.totalNumberOfChunks );	
+					
+
+
+					chunkStartCol = (chunkWidth* featureExtractionConfig.offsetIntoNumberOfChunks) -chunkBufferAmount;
+
+								
+								
+					if((featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation) >= featureExtractionConfig.totalNumberOfChunks)
+					{
+						chunkEndCol = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].cols;				
+					}
+					else
+					{
+						chunkEndCol = (featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation)* chunkWidth +chunkBufferAmount			;		
+					}
+					if(chunkEndCol > imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].cols)
+					{
+						chunkEndCol = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].cols;				
+					}
+					if(chunkStartCol < 0)
+					{
+						chunkStartCol =  0;
+					}
+					if(chunkEndRow > imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].rows)
+					{
+						chunkEndRow = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].rows;				
+					}
+					if(chunkStartRow < 0)
+					{
+						chunkStartRow =  0;
+					}
+					
+					
+
+					Mat newImageRegion0 = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA](Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+					featureExtractionConfig.frameSize = newImageRegion0.size();
+
+				}
+				else
+				{
+
+
+
+
+
+					featureExtractionConfig.frameSize = imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].size();
+//					featureExtractionData.frameSize = leftFrame.size();
+				}
 				featureExtractionConfig.currentImageId++;
 				returnVal = featureExtractionConfig.imageList.size() - featureExtractionConfig.currentImageId;
 			}
@@ -3670,12 +3939,74 @@ int getNextImages(vector<Mat>&  images,FeatureExtractionConfig & featureExtracti
 			}
 	}
 
-
+	
 	if(images[0].empty())
 	{
 
 		featureExtractionConfig.outOfImages = true;
 	}
+	else
+	{
+		if(featureExtractionConfig.chunksActive)
+		{
+			int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
+			int chunkStartCol;  
+			int chunkEndCol;  
+			int chunkStartRow = 0;
+			int chunkEndRow = images[0].rows;
+
+			int chunkWidth = (images[0].cols/featureExtractionConfig.totalNumberOfChunks );	
+			
+
+
+			chunkStartCol = (chunkWidth* featureExtractionConfig.offsetIntoNumberOfChunks) -chunkBufferAmount;
+
+						
+						
+			if((featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation) >= featureExtractionConfig.totalNumberOfChunks)
+			{
+				chunkEndCol = images[0].cols;				
+			}
+			else
+			{
+				chunkEndCol = (featureExtractionConfig.offsetIntoNumberOfChunks +featureExtractionConfig.numberOfChunksForSimulation)* chunkWidth +chunkBufferAmount			;		
+			}
+			if(chunkEndCol > images[0].cols)
+			{
+				chunkEndCol = images[0].cols;				
+			}
+			if(chunkStartCol < 0)
+			{
+				chunkStartCol =  0;
+			}
+			if(chunkEndRow > images[0].rows)
+			{
+				chunkEndRow = images[0].rows;				
+			}
+			if(chunkStartRow < 0)
+			{
+				chunkStartRow =  0;
+			}
+			
+			
+
+			Mat newImageRegion0 = images[0](Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+			images[0] = newImageRegion0;
+			//imshow("New Image",images[0]);
+			//waitKey(0);
+			if((images.size()) >1 && (!images[1].empty()))
+			{
+				Mat newImageRegion1 = images[1](Range(chunkStartRow,chunkEndRow),Range(chunkStartCol,chunkEndCol));
+				images[1] = newImageRegion1;
+
+			}
+
+		}
+
+	}
+	
+	
+	
 	return returnVal;
 }
 

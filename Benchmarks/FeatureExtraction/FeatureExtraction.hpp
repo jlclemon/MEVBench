@@ -241,8 +241,15 @@ struct FeatureExtractionConfig
 	int maxLoops;
 	int loopCount;
 
-
-
+	//These variables are to support running on a piece of the image
+	//Thus you split the image into n total number of chunks
+	//Then you take the number of processors running and start them on
+	//The given number of chunks with a buffer for each
+	//chunk edge that is not the edge of the image
+	int totalNumberOfChunks;
+	int offsetIntoNumberOfChunks;
+	int numberOfChunksForSimulation;
+	bool chunksActive;
 };
 
 struct FeatureExtractionData

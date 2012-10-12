@@ -279,6 +279,16 @@ struct FeatureClassificationConfig
 
 	bool singleCopyOfClassificationStruct;
 	bool partialCopyOfClassificationStruct;
+	
+	//These variables are to support running on a piece of the input data
+	//Thus you split the data into n total number of chunks
+	//Then you take the number of processors running and start them on
+	//The given number of chunks 
+	int totalNumberOfChunks;
+	int offsetIntoNumberOfChunks;
+	int numberOfChunksForSimulation;
+	bool chunksActive;
+	
 };
 typedef void * (*thread_fptr)(void *);
 

@@ -36,8 +36,18 @@ fi
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
 export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeStaticInstall"
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeStaticInstall/"
-export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
-export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
+
+if [ -z "$USE_EFFEX" ]; then
+
+	export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
+	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
+else
+	export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
+	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexInstall"
+
+fi
+
+
 if [ -n "$XTRA_PARAMS" ]; then
 	echo "Setting XTR_PARAMS=$XTRA_PARAMS based on pre defined value"
 	#export XTRA_PARAMS="$XTRA_PARAMS -DUSE_MARSS"
@@ -63,7 +73,7 @@ export ARM_XTRA_PARAMS="-DOPENCV_2_4 -DUSE_GEM5 -DCLOCK_GETTIME_TIMING -mno-unal
 if [ -n "$USE_EFFEX_INSTR" ]; then
 
 
-	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_DATA_INSTR_CMAC -DUSE_EFFEX_DATA_INSTR_OTM -DUSE_CACHE_AND_PREFETCH_INSTR"
+	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_DATA_INSTR_CMAC -DUSE_EFFEX_DATA_INSTR_OTM -DUSE_CACHE_AND_PREFETCH_INSTR -DUSE_EFFEX_DATA_INSTR_TREE -DUSE_EFFEX_DATA_INSTR_MAX"
 
 fi
 if [ -n "$USE_EFFEX" ]; then

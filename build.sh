@@ -43,7 +43,19 @@ if [ -z "$USE_EFFEX" ]; then
 	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
 else
 	export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
+
+	#Effex active but no instructions
 	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexInstall"
+	
+	#EverythingActive
+	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveInstall"
+
+	#Everything but prefech active
+	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveMinusPrefetchInstall"
+
+	#Only prefetch active
+	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexPrefetchActiveOnlyInstall"	
+	
 
 fi
 
@@ -68,7 +80,8 @@ if [ -n "$USE_EFFEX" ]; then
 
 fi
 
-export ARM_XTRA_PARAMS="-DOPENCV_2_4 -DUSE_GEM5 -DCLOCK_GETTIME_TIMING -mno-unaligned-access"
+export ARM_XTRA_PARAMS="-DOPENCV_2_4 -DUSE_GEM5 -mno-unaligned-access"
+#-DCLOCK_GETTIME_TIMING
 #-DOPENCV_VER_2_3
 if [ -n "$USE_EFFEX_INSTR" ]; then
 

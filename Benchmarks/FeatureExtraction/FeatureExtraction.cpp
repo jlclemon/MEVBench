@@ -3845,7 +3845,7 @@ int getNextImages(vector<Mat>&  images,FeatureExtractionConfig & featureExtracti
 
 				}
 
-				if(featureExtractionConfig.chunksActive)
+				if(featureExtractionConfig.chunksActive && !imageBuffers[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA].empty())
 				{
 					int chunkBufferAmount = CHUNK_BUFFER_AMOUNT;
 					int chunkStartCol;  

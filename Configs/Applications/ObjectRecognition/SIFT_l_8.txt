@@ -25,7 +25,7 @@ sift
 -nHoriCores
 4
 
--Redistribute
+#-Redistribute
 
 -noShowWindows
 

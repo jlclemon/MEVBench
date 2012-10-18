@@ -92,7 +92,10 @@ if [ "${1}" == "all" ]; then
 
 
 else
-	if [ $# -lt 3 -o $# -gt 4 ]; then
+	if [ $# -ne 3 -a $# -ne 4 -a $# -ne 5 -a  $# -ne 6 -a $# -ne 8 -a $# -ne 9 ]; then
+	    let number=$#-1
+	    echo "The nth is ${!number} ."
+
 	    print_usage
 	    exit
 
@@ -101,14 +104,51 @@ else
 
 	CONFIG_FILE_BASE=$BASEDIR/Configs
 	RESULTS_DIR=$BASEDIR/Results/
-
-	if [ $# == 4 ]; then 
+	if [ "${$#}" == "static" ]; then
+#	if [ $# == 4 ]; then 
 
 		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
 		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
 		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
 		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
 		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+
+	elif [ "${$#}" == "staticEffex" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+
+
+	elif [ "${$#}" == "staticEffexAll" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+
+
+
+	elif [ "${$#}" == "staticEffexMinusPrefetch" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+
+
+	elif [ "${$#}" == "staticEffexPrefetchOnly" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+
 
 
 	else
@@ -119,6 +159,28 @@ else
 		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetection
 
 	fi
+
+
+	if [ $# == 5 -o $# == 6 ]; then
+		NUMBER_OF_CORES_COMMAND=" -nVertCores ${4} -nHoriCores ${5} "
+
+
+	else
+		NUMBER_OF_CORES_COMMAND=""
+
+	fi
+
+
+	if [ $# == 8 -o $# == 9 ]; then
+		OFFSET_COMMAND=" -imageChunksActive -offsetIntoChunks ${6} -numberOfChunksForSimulation ${7} -totalNumberOfChunks ${8} "
+
+	else
+		OFFSET_COMMAND=""
+
+	fi
+
+
+
 
 	ExecOutputFileName=timing.csv
 

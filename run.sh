@@ -28,7 +28,7 @@
 #
 
 
-export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall/"
+export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall/"
 #"/home/jlclemon/Documents/OpenCV/OpenCV2.2NativeInstall/"
 export OpenCV_STATIC_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeStaticInstall/"
 

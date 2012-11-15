@@ -104,7 +104,7 @@ else
 
 	CONFIG_FILE_BASE=$BASEDIR/Configs
 	RESULTS_DIR=$BASEDIR/Results/
-	if [ "${$#}" == "static" ]; then
+	if [ "${!#}" == "static" ]; then
 #	if [ $# == 4 ]; then 
 
 		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
@@ -113,41 +113,41 @@ else
 		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
 		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
 
-	elif [ "${$#}" == "staticEffex" ]; then
+	elif [ "${!#}" == "staticEffex" ]; then
 
-		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
-		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
-		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
-		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
-		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
-
-
-	elif [ "${$#}" == "staticEffexAll" ]; then
-
-		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
-		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
-		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
-		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
-		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionEffexBaseStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationEffexBaseStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationEffexBaseStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityEffexBaseStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionEffexBaseStatic
 
 
+	elif [ "${!#}" == "staticEffexAll" ]; then
 
-	elif [ "${$#}" == "staticEffexMinusPrefetch" ]; then
-
-		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
-		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
-		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
-		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
-		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionFullEffexStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationFullEffexStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationFullEffexStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityFullEffexStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionFullEffexStatic
 
 
-	elif [ "${$#}" == "staticEffexPrefetchOnly" ]; then
 
-		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionStatic
-		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationStatic
-		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationStatic
-		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityStatic
-		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionStatic
+	elif [ "${!#}" == "staticEffexMinusPrefetch" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionFullEffexNoPrefetchStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationFullEffexNoPrefetchStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationFullEffexNoPrefetchStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityFullEffexNoPrefetchStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionFullEffexNoPrefetchStatic
+
+
+	elif [ "${!#}" == "staticEffexPrefetchOnly" ]; then
+
+		FEATURE_EXTRACTION_EXEC=$BASEDIR/Benchmarks/FeatureExtraction/bin/arm/FeatureExtractionEffexPrefetchOnlyStatic
+		FEATURE_CLASSIFICATION_EXEC=$BASEDIR/Benchmarks/FeatureClassification/bin/arm/FeatureClassificationEffexPrefetchOnlyStatic
+		OBJ_RECOG_EXEC=$BASEDIR/Benchmarks/Applications/ObjectRecognition/bin/arm/FeatureExtractionAndClassificationEffexPrefetchOnlyStatic
+		AUG_REALITY_EXEC=$BASEDIR/Benchmarks/Applications/AugmentedReality/bin/arm/AugmentedRealityEffexPrefetchOnlyStatic
+		FACE_DETECT_EXEC=$BASEDIR/Benchmarks/Applications/FaceDetection/bin/arm/FaceDetectionEffexPrefetchOnlyStatic
 
 
 
@@ -161,25 +161,31 @@ else
 	fi
 
 
-	if [ $# == 5 -o $# == 6 ]; then
+	if [ $# == 5 -o $# == 6 -o $# == 8 -o $# == 9 ]; then
 		NUMBER_OF_CORES_COMMAND=" -nVertCores ${4} -nHoriCores ${5} "
-
+		OBJ_RECOG_EXTRACT_EXTRA_COMMANDS="-extractXtraParams -nVertCores,${4},-nHoriCores,${5}"
+		OBJ_RECOG_CLASSIFY_EXTRA_COMMANDS="-classifyXtraParams -nVertCores,${4},-nHoriCores,${5}"
+		OUTPUT_FILE_SUFFIX="_Vcores_${4}_Hcores_${5}"
 
 	else
 		NUMBER_OF_CORES_COMMAND=""
+		OUTPUT_FILE_SUFFIX=""
+		OBJ_RECOG_EXTRACT_EXTRA_COMMANDS=""
+		OBJ_RECOG_CLASSIFY_EXTRA_COMMANDS=""
+
 
 	fi
 
 
 	if [ $# == 8 -o $# == 9 ]; then
 		OFFSET_COMMAND=" -imageChunksActive -offsetIntoChunks ${6} -numberOfChunksForSimulation ${7} -totalNumberOfChunks ${8} "
-
+		OBJ_RECOG_EXTRACT_EXTRA_COMMANDS="$OBJ_RECOG_EXTRACT_EXTRA_COMMANDS,-imageChunksActive,-offsetIntoChunks,${6},-numberOfChunksForSimulation,${7},-totalNumberOfChunks,${8}"
+		OUTPUT_FILE_SUFFIX="${OUTPUT_FILE_SUFFIX}_Offset_${6}_SimChunks_${7}_TotalChunks_${8}"
 	else
 		OFFSET_COMMAND=""
 
+
 	fi
-
-
 
 
 	ExecOutputFileName=timing.csv
@@ -192,9 +198,9 @@ else
 	if [ $APPLICATION == "SIFT" -o $APPLICATION == "FAST" -o $APPLICATION == "HoG" -o $APPLICATION == "SURF" -o $APPLICATION == "ORB" ]; then
 		echo "Feature Extraction"
 
-		echo "-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		EXTRACTION_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		EXTRACTION_OUTPUT_FILE="${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.csv"
+		echo "-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		EXTRACTION_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/FeatureExtraction/$APPLICATION/${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND"
+		EXTRACTION_OUTPUT_FILE="${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}${OUTPUT_FILE_SUFFIX}.csv"
 		$FEATURE_EXTRACTION_EXEC $EXTRACTION_CONFIG_LINE
 		if [ -e $ExecOutputFileName ]; then
 			mv $ExecOutputFileName $RESULTS_DIR/$EXTRACTION_OUTPUT_FILE
@@ -213,9 +219,9 @@ else
 	if [ $APPLICATION == "BOOST" -o $APPLICATION == "KNN" -o $APPLICATION == "SVM" ]; then
 		echo "Feature Classification"
 
-		echo "-configFile $CONFIG_FILE_BASE/FeatureClassification/$APPLICATION/${APPLICATION,,}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		CLASSIFICATION_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/FeatureClassification/$APPLICATION/${APPLICATION,,}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		CLASSIFICATION_OUTPUT_FILE="${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}.csv"
+		echo "-configFile $CONFIG_FILE_BASE/FeatureClassification/$APPLICATION/${APPLICATION,,}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		CLASSIFICATION_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/FeatureClassification/$APPLICATION/${APPLICATION,,}_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		CLASSIFICATION_OUTPUT_FILE="${APPLICATION}_${INPUTSIZE}_${NUMBEROFTHREADS}${OUTPUT_FILE_SUFFIX}.csv"
 		$FEATURE_CLASSIFICATION_EXEC $CLASSIFICATION_CONFIG_LINE
 
 		if [ -e $ExecOutputFileName ]; then
@@ -232,9 +238,9 @@ else
 	if [ $APPLICATION == "FACEDETECT" ]; then
 		echo "Face Detection"
 
-		echo "-configFile $CONFIG_FILE_BASE/Applications/FaceDetection/facedet_${INPUTSIZE}_1.txt"
-		FACE_DETECT_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/Applications/FaceDetection/facedet_${INPUTSIZE}_1.txt"
-		FACE_DETECT_OUTPUT_FILE="facedet_${INPUTSIZE}_1.csv"
+		echo "-configFile $CONFIG_FILE_BASE/Applications/FaceDetection/facedet_${INPUTSIZE}_1.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		FACE_DETECT_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/Applications/FaceDetection/facedet_${INPUTSIZE}_1.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		FACE_DETECT_OUTPUT_FILE="facedet_${INPUTSIZE}_1${OUTPUT_FILE_SUFFIX}.csv"
 		$FACE_DETECT_EXEC $FACE_DETECT_CONFIG_LINE
 		if [ -e $ExecOutputFileName ]; then
 			mv $ExecOutputFileName $RESULTS_DIR/$FACE_DETECT_OUTPUT_FILE
@@ -252,9 +258,9 @@ else
 	if [ $APPLICATION == "OBJRECOG" ]; then
 		echo "Object Recognition"
 
-		echo "-extractionConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/SIFT_${INPUTSIZE}_${NUMBEROFTHREADS}.txt -classificationConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		OBJ_RECOG_CONFIG_LINE="-noShowWindows -noWaitKey -extractionConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/SIFT_${INPUTSIZE}_${NUMBEROFTHREADS}.txt -classificationConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}.txt"
-		OBJ_RECOG_OUTPUT_FILE="objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}.csv"
+		echo "-extractionConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/SIFT_${INPUTSIZE}_${NUMBEROFTHREADS}.txt -classificationConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $OBJ_RECOG_EXTRACT_EXTRA_COMMANDS $OBJ_RECOG_CLASSIFY_EXTRA_COMMANDS"
+		OBJ_RECOG_CONFIG_LINE="-noShowWindows -noWaitKey -extractionConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/SIFT_${INPUTSIZE}_${NUMBEROFTHREADS}.txt -classificationConfig $CONFIG_FILE_BASE/Applications/ObjectRecognition/objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}.txt $OBJ_RECOG_EXTRACT_EXTRA_COMMANDS $OBJ_RECOG_CLASSIFY_EXTRA_COMMANDS"
+		OBJ_RECOG_OUTPUT_FILE="objrecog_${INPUTSIZE}_${NUMBEROFTHREADS}${OUTPUT_FILE_SUFFIX}.csv"
 
 		$OBJ_RECOG_EXEC $OBJ_RECOG_CONFIG_LINE
 
@@ -273,12 +279,12 @@ else
 		echo "Augmented Reality"
 
 
-		echo "-configFile $CONFIG_FILE_BASE/Applications/AugmentedReality/aug_${INPUTSIZE}_1.txt"
-		AUG_REALITY_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/Applications/AugmentedReality/aug_${INPUTSIZE}_1.txt"
-		AUG_REALITY_OUTPUT_FILE="aug_${INPUTSIZE}_1.csv"
+		echo "-configFile $CONFIG_FILE_BASE/Applications/AugmentedReality/aug_${INPUTSIZE}_1.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		AUG_REALITY_CONFIG_LINE="-configFile $CONFIG_FILE_BASE/Applications/AugmentedReality/aug_${INPUTSIZE}_1.txt $NUMBER_OF_CORES_COMMAND $OFFSET_COMMAND "
+		AUG_REALITY_OUTPUT_FILE="aug_${INPUTSIZE}_1${OUTPUT_FILE_SUFFIX}.csv"
 		$AUG_REALITY_EXEC $AUG_REALITY_CONFIG_LINE
 		if [ -e $ExecOutputFileName ]; then
-			mv $ExecOutputFileName $RESULTS_DIR/AUG_REALITY_OUTPUT_FILE
+			mv $ExecOutputFileName $RESULTS_DIR/$AUG_REALITY_OUTPUT_FILE
 		else
 			echo "Output file does not exist"
 		fi
@@ -293,4 +299,5 @@ else
 fi
 
 exit
+
 

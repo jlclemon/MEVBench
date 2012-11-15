@@ -63,7 +63,14 @@ extern "C"
 #endif
 
 
-#define TIMING_MAX_NUMBER_OF_THREADS 64
+#ifdef USE_GEM5
+#include <fenv.h>
+#include <signal.h>
+#include <stdio.h>
+void classification_sig_handler(int signum);
+#endif
+
+#define TIMING_MAX_NUMBER_OF_THREADS 256
 
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"
@@ -178,9 +185,9 @@ void * coordinatorThreadFunction(void * threadParam)
 		m5_checkpoint(0, 0);
 	#endif
 
-	#ifdef GEM5_SWITCHCPU_AT_WORK
-		m5_switchcpu();
-	#endif 
+//	#ifdef GEM5_SWITCHCPU_AT_WORK
+//		m5_switchcpu();
+//	#endif 
 	m5_dumpreset_stats(0, 0);
 #endif
 
@@ -680,8 +687,18 @@ void runMultiThreadedFeatureExtractionAndClassification(int argc, const char * a
 #endif
 
 
+void classification_sig_handler(int signum)
+{
+    feclearexcept(FE_ALL_EXCEPT);
+}
+
+
 int main (int argc, const char * argv[])
 {
+#ifdef USE_GEM5
+    signal(SIGFPE, classification_sig_handler); 
+#endif
+
 
 	cout << "Hello world" << endl;
 #ifdef TSC_TIMING

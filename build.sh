@@ -43,19 +43,27 @@ if [ -z "$USE_EFFEX" ]; then
 	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmStaticInstall"
 else
 	export OpenCV_ARM_DIR="$HOME/Documents/OpenCV/OpenCV2.3.1ArmInstall"
+	if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+		#EverythingActive
+		export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveInstall"
+		USE_EFFEX_INSTR="ALL_INSTR"
 
-	#Effex active but no instructions
-	export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexInstall"
-	
-	#EverythingActive
-	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveInstall"
+	elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
 
-	#Everything but prefech active
-	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveMinusPrefetchInstall"
+		#Everything but prefech active
+		export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexFullActiveMinusPrefetchInstall"
+		USE_EFFEX_INSTR="ALL_INSTR_NO_PREFETCH"
 
-	#Only prefetch active
-	#export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexPrefetchActiveOnlyInstall"	
-	
+	elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+		#Only prefetch active
+		export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexPrefetchActiveOnlyInstall"	
+		USE_EFFEX_INSTR="PREFETCH_ONLY"
+	else
+		USE_EFFEX="EFFEX_BASE"
+		#Effex active but no instructions
+		export OpenCV_ARM_STATIC_DIR="$HOME/Documents/OpenCV/OpenCV2.4.2ArmStaticSoftFloatEffexInstall"
+		USE_EFFEX_INSTR="NONE"
+	fi
 
 fi
 
@@ -80,15 +88,25 @@ if [ -n "$USE_EFFEX" ]; then
 
 fi
 
-export ARM_XTRA_PARAMS="-DOPENCV_2_4 -DUSE_GEM5 -mno-unaligned-access"
+export ARM_XTRA_PARAMS="-DOPENCV_2_4 -mno-unaligned-access -DUSE_GEM5 -DGEM5_SWITCHCPU_AT_WORK"
+# -DGEM5_SWITCHCPU_AT_WORK
+# -DUSE_GEM5
 #-DCLOCK_GETTIME_TIMING
 #-DOPENCV_VER_2_3
-if [ -n "$USE_EFFEX_INSTR" ]; then
-
-
+if [ $USE_EFFEX_INSTR == "ALL_INSTR" ]; then
 	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_DATA_INSTR_CMAC -DUSE_EFFEX_DATA_INSTR_OTM -DUSE_CACHE_AND_PREFETCH_INSTR -DUSE_EFFEX_DATA_INSTR_TREE -DUSE_EFFEX_DATA_INSTR_MAX"
-
 fi
+
+if [ $USE_EFFEX_INSTR == "ALL_INSTR_NO_PREFETCH" ]; then
+	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_EFFEX_DATA_INSTR_CMAC -DUSE_EFFEX_DATA_INSTR_OTM -DUSE_EFFEX_DATA_INSTR_TREE -DUSE_EFFEX_DATA_INSTR_MAX"
+fi
+
+if [ $USE_EFFEX_INSTR == "PREFETCH_ONLY" ]; then
+	export ARM_XTRA_PARAMS="$ARM_XTRA_PARAMS -DUSE_CACHE_AND_PREFETCH_INSTR"
+fi
+
+
+
 if [ -n "$USE_EFFEX" ]; then
 
 
@@ -143,17 +161,33 @@ if [ $BUILD_ARM == "FALSE" ]; then
 		make --file=makefile_static clean
 		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
+
+
+
+
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_static clean
 		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+
+
+
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_static clean
 		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
+
+
+
+
+
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_static clean
 		make --file=makefile_static XTRA_PARAMS="$XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+
+
 
 	    fi
 	    if [ "${1}" == "dynamic" ]; then
@@ -325,22 +359,99 @@ else
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityEffexBaseStatic
+			fi	
+		fi
+
+
+
 
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionEffexBaseStatic
+			fi	
+		fi
+
+
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationEffexBaseStatic
+			fi	
+		fi
+
+
 
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
 
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationEffexBaseStatic
+			fi	
+		fi
+
+
+
+
+
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionEffexBaseStatic
+			fi	
+		fi
+
+
 
 	    fi
 	    if [ "${1}" == "dynamic" ]; then
@@ -440,6 +551,21 @@ else
 		cd "$BASEDIR/Benchmarks/Applications/AugmentedReality"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/AugmentedRealityStatic ./bin/arm/AugmentedRealityEffexBaseStatic
+			fi	
+		fi
+
+
 	    fi
 
 
@@ -455,6 +581,20 @@ else
 		cd "$BASEDIR/Benchmarks/Applications/FaceDetection"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FaceDetectionStatic ./bin/arm/FaceDetectionEffexBaseStatic
+			fi	
+		fi
+
 	    fi
 
 	    if [ "${1}" == "ObjectRecognition" ]; then
@@ -468,6 +608,21 @@ else
 		cd "$BASEDIR/Benchmarks/Applications/ObjectRecognition"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureExtractionAndClassificationStatic ./bin/arm/FeatureExtractionAndClassificationEffexBaseStatic
+			fi	
+		fi
+
+
 	    fi
 
 	    if [ "${1}" == "FeatureClassification" ]; then
@@ -481,6 +636,20 @@ else
 		cd "$BASEDIR/Benchmarks/FeatureClassification"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureClassificationStatic ./bin/arm/FeatureClassificationEffexBaseStatic
+			fi	
+		fi
+
 	    fi
 
 	    if [ "${1}" == "FeatureExtraction" ]; then
@@ -494,6 +663,22 @@ else
 		cd "$BASEDIR/Benchmarks/FeatureExtraction"
 		make --file=makefile_arm_static clean
 		make --file=makefile_arm_static XTRA_PARAMS="$ARM_XTRA_PARAMS" XTRA_LIBS="$XTRA_LIBS"
+
+
+		if [ -n "$USE_EFFEX" ]; then
+
+			if [ $USE_EFFEX == "FULL_EFFEX" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionFullEffexStatic
+			elif [ $USE_EFFEX == "FULL_EFFEX_NO_PREFETCH" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionFullEffexNoPrefetchStatic
+			elif [ $USE_EFFEX == "EFFEX_PREFETCH_ONLY" ]; then
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionEffexPrefetchOnlyStatic
+			else
+				mv ./bin/arm/FeatureExtractionStatic ./bin/arm/FeatureExtractionEffexBaseStatic
+			fi	
+		fi
+
+
 	    fi
 
 

@@ -56,7 +56,7 @@ extern "C"
 #endif
 
 
-#define TIMING_MAX_NUMBER_OF_THREADS 64
+#define TIMING_MAX_NUMBER_OF_THREADS 256
 #ifdef TSC_TIMING
 vector<TSC_VAL_w> fc_timingVector;
 #endif
@@ -2371,6 +2371,7 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 	#endif
 
 	#ifdef GEM5_SWITCHCPU_AT_WORK
+		cout << "Class::Switching CPU call Now" << endl;
 		m5_switchcpu();
 	#endif 
 	m5_dumpreset_stats(0, 0);
@@ -2634,6 +2635,7 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 	#endif
 
 	#ifdef GEM5_SWITCHCPU_AT_WORK
+		cout << "Class::Switching CPU call Now" << endl;
 		m5_switchcpu();
 	#endif 
 	m5_dumpreset_stats(0, 0);
@@ -4220,6 +4222,7 @@ void * featureClassification_testCoordinatorThreadStandAlone(void * threadParam)
 	#endif
 
 	#ifdef GEM5_SWITCHCPU_AT_WORK
+		cout << "Class::Switching CPU call Now" << endl;
 		m5_switchcpu();
 	#endif 
 	m5_dumpreset_stats(0, 0);

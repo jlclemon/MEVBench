@@ -18,7 +18,7 @@ extern "C"
 }
 #endif
 
-#define TIMING_MAX_NUMBER_OF_THREADS 64
+#define TIMING_MAX_NUMBER_OF_THREADS 256
 
 //#define TSC_TIMING
 #ifdef TSC_TIMING
@@ -1174,6 +1174,7 @@ int augmentedReality_main(int argc, const char * argv[])
 	{
 #ifdef USE_GEM5
 	m5_dumpreset_stats(0, 0);
+
 #endif
 		augmentedRealityGetNextFrames(augmentedRealityConfig, augmentedRealityData);
 

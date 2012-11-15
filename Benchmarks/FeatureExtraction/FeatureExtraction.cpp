@@ -49,7 +49,7 @@ extern "C"
 
 #endif
 //#define CLOCK_GETTIME_TIMING
-#define TIMING_MAX_NUMBER_OF_THREADS 64
+#define TIMING_MAX_NUMBER_OF_THREADS 256
 
 #ifdef CLOCK_GETTIME_TIMING
 
@@ -57,6 +57,14 @@ extern "C"
 #ifndef GET_TIME_WRAPPER
 #define GET_TIME_WRAPPER(dataStruct) clock_gettime(CLOCK_THREAD_CPUTIME_ID, &dataStruct)
 #endif
+#endif
+
+#ifdef USE_GEM5
+#include <fenv.h>
+#include <signal.h>
+#include <stdio.h>
+
+
 #endif
 
 
@@ -833,6 +841,7 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 	#endif
 
 	#ifdef GEM5_SWITCHCPU_AT_WORK
+		cout << "Ext 2::Switching CPU call Now" << endl;
 		m5_switchcpu();
 	#endif 
 	m5_dumpreset_stats(0, 0);
@@ -850,6 +859,13 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 	{
 		int numberOfImagesRemaining;
 		numberOfImagesRemaining = getNextImages(inputImagesPerFrame,featureExtractionConfig);
+		#ifdef USE_GEM5
+			#ifdef GEM5_CHECKPOINT_WORK
+				m5_checkpoint(0, 0);
+			#endif
+
+			m5_dumpreset_stats(0, 0);
+		#endif
 
 
 		if(numberOfImagesRemaining <=1 )
@@ -2092,7 +2108,7 @@ void  featureExtractionWorkerThreadSetupFunctionStandAlone(struct GeneralWorkerT
 	else
 	{
 		int overFlowAmount = 0;
-		int regionEndXLocation = workerThreadInfo->myPaddedImageRegionRect.x+  myFeatureExtractionData->xBufferAmount;
+		int regionEndXLocation = workerThreadInfo->myPaddedImageRegionRect.x+workerThreadInfo->myPaddedImageRegionRect.width+  myFeatureExtractionData->xBufferAmount;
 		if(regionEndXLocation> imageSize.width)
 		{
 
@@ -2138,7 +2154,7 @@ void  featureExtractionWorkerThreadSetupFunctionStandAlone(struct GeneralWorkerT
 	else
 	{
 		int overFlowAmount = 0;
-		int regionEndLocation = workerThreadInfo->myPaddedImageRegionRect.y+  myFeatureExtractionData->yBufferAmount;
+		int regionEndLocation = workerThreadInfo->myPaddedImageRegionRect.y+workerThreadInfo->myPaddedImageRegionRect.height+  myFeatureExtractionData->yBufferAmount;
 		if(regionEndLocation> imageSize.height)
 		{
 
@@ -2237,7 +2253,11 @@ void featureExtractionHandleKeypointRedistribution(struct GeneralWorkerThreadDat
 }
 void featureExtractionSetThreadImageRegion(struct GeneralWorkerThreadData * genData,FeatureExtractionWorkerThreadInfo * workerThreadInfo)
 {
+
+
 	workerThreadInfo->myNonPaddedImageRegion = (*(workerThreadInfo->featureExtractionData->inputImagesPerFrame))[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA](workerThreadInfo->myNonPaddedImageRegionRect);
+
+	//cout<< " Thread Id: "<<genData->myThread->getThreadLogicalId()<< " , " << workerThreadInfo->myPaddedImageRegionRect.x<< " , "  << workerThreadInfo->myPaddedImageRegionRect.y<< " , "  << workerThreadInfo->myPaddedImageRegionRect.width<< " , "  << workerThreadInfo->myPaddedImageRegionRect.height << endl;
 	workerThreadInfo->myPaddedImageRegion = (*(workerThreadInfo->featureExtractionData->inputImagesPerFrame))[FEATURE_DESC_IMAGE_SOURCE_LOCATION_LEFT_CAMERA](workerThreadInfo->myPaddedImageRegionRect);
 
 
@@ -2634,7 +2654,7 @@ void featureExtractionHandleFeatureExtractionCoordinator(struct GeneralWorkerThr
 	myThread->waitAtBarrier();
 }
 
-
+static int switchedCpu = 0;
 
 void  featureExtractionCoordinatorThreadFunctionStandAlone(struct GeneralWorkerThreadData * genData,void * workerThreadStruct)
 {
@@ -2651,7 +2671,29 @@ void  featureExtractionCoordinatorThreadFunctionStandAlone(struct GeneralWorkerT
 		workerThreadInfo->done = true;
 
 	}
+
+	#ifdef USE_GEM5
+		#ifdef GEM5_CHECKPOINT_WORK
+			m5_checkpoint(0, 0);
+		#endif
+
+		#ifdef GEM5_SWITCHCPU_AT_WORK
+			//static int switchedCpu = 0;
+			if(switchedCpu ==0)
+			{
+				cout << "Ext 1 ::Switching CPU call Now: " << switchedCpu <<endl;
+				m5_switchcpu();
+				switchedCpu =1;
+				cout << "Ext 1 ::Switching CPU call Done: " << switchedCpu <<endl;
+			}
+		#endif 
+		m5_dumpreset_stats(0, 0);
+	#endif
+
+
 	myThread->waitAtBarrier();
+	cout << "Coord passed barrier Got Image" << endl;
+
 	if(workerThreadInfo->featureExtractionInfo->outOfImages || workerThreadInfo->myFeatureExtractionInfo->outOfImages)
 	{
 
@@ -2683,6 +2725,8 @@ void  featureExtractionWorkerThreadFunctionStandAlone(struct GeneralWorkerThread
 	struct FeatureExtractionMultiThreadData * myMultiThreadExtractionData = reinterpret_cast<FeatureExtractionMultiThreadData *>(workerThreadInfo->multiThreadAlgorithmData);
 	myMultiThreadExtractionData->clearNonShared();
 	myThread->waitAtBarrier();
+
+	cout << genData->myThread->getThreadLogicalId()<<" passed barrier Got Image" << endl;
 	if(workerThreadInfo->featureExtractionInfo->outOfImages || workerThreadInfo->myFeatureExtractionInfo->outOfImages)
 	{
 
@@ -2767,9 +2811,6 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 		m5_checkpoint(0, 0);
 	#endif
 
-	#ifdef GEM5_SWITCHCPU_AT_WORK
-		m5_switchcpu();
-	#endif 
 	m5_dumpreset_stats(0, 0);
 #endif
 
@@ -2786,13 +2827,10 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 	ptlcall_kill();
 #endif
 #ifdef USE_GEM5
-
 	m5_dumpreset_stats(0, 0);
 	#ifdef GEM5_EXIT_AFTER_WORK
 		m5_exit(0);
 	#endif
-
-
 #endif
 
 
@@ -3552,10 +3590,21 @@ void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])
 #endif
 
 
+#ifdef USE_GEM5
+	void extraction_sig_handler(int signum)
+	{
+	    feclearexcept(FE_ALL_EXCEPT);
+	}
+#endif
+
 
 #ifndef FEATURE_EXTRACTION_MODULE
 int main(int argc, const char * argv[])
 {
+#ifdef USE_GEM5
+    signal(SIGFPE, extraction_sig_handler); 
+#endif
+
 	FeatureExtractionConfig featureExtractionConfig;
 
 	std::cout << "Feature Extraction Mechanism" << std::endl;
@@ -3624,6 +3673,17 @@ int main(int argc, const char * argv[])
 	if(featureExtractionConfig.singleThreaded ==false)
 	{
 
+#ifdef USE_GEM5
+	#ifdef GEM5_CHECKPOINT_WORK
+		m5_checkpoint(0, 0);
+	#endif
+
+	//#ifdef GEM5_SWITCHCPU_AT_WORK
+		//cout << "Ext 3::Switching CPU call Now" << endl;
+		//m5_switchcpu();
+	//#endif 
+	m5_dumpreset_stats(0, 0);
+#endif
 		multiThreadFeatureExtraction_StandAloneTest(argc, argv);
 #ifdef TSC_TIMING
 		fe_writeTimingToFile(fe_timingVector);
@@ -4005,7 +4065,10 @@ int getNextImages(vector<Mat>&  images,FeatureExtractionConfig & featureExtracti
 
 	}
 	
-	
+	if(!images[0].empty())
+	{
+		cout << "Rows,Cols : " << images[0].rows << "," << images[0].cols << endl;		
+	}
 	
 	return returnVal;
 }

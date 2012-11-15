@@ -47,7 +47,7 @@ extern "C"
 }
 #endif
 
-#define TIMING_MAX_NUMBER_OF_THREADS 64
+#define TIMING_MAX_NUMBER_OF_THREADS 256
 //#define TSC_TIMING
 #ifdef TSC_TIMING
 #include "tsc_class.hpp"

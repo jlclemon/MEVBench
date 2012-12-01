@@ -80,7 +80,7 @@ else
 	#export XTRA_PARAMS="-DTSC_TIMING"
 
 	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING -DOPENCV_2_4"
-	export XTRA_LIBS="opencv_effex"
+#	export XTRA_LIBS="opencv_effex"
 fi
 if [ -n "$USE_EFFEX" ]; then
 	echo "$USE_EFFEX Using Effex"

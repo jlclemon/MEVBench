@@ -77,26 +77,25 @@ vector<struct timespec> fd_timeStructVector;
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start,Finish" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start,Finish,Mid" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i] << "," << timingVector[i+timingVector.size()/2] << endl;
+				outputFile << i << "," << timingVector[i] << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS]<< ","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS] << endl;
 
 			}
 			outputFile.close();
 		}
 #endif
-
 #ifdef CLOCK_GETTIME_TIMING
 		void fd_writeTimingToFile(vector<struct timespec> timingVector)
 		{
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec,Mid sec, Mid nsec" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+timingVector.size()/2].tv_sec<<","<< timingVector[i+timingVector.size()/2].tv_nsec <<endl;
+				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_nsec<< "," << timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_nsec <<endl;
 
 			}
 			outputFile.close();
@@ -830,10 +829,10 @@ void setupFaceDetectionData(FaceDetectionConfig & faceDetectionConfig, FaceDetec
 
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fd_timingVector[0+ fd_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fd_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fd_timeStructVector[0+ fd_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fd_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 #ifdef TSC_TIMING
 		fd_writeTimingToFile(fd_timingVector);
@@ -865,12 +864,12 @@ void setupFaceDetectionData(FaceDetectionConfig & faceDetectionConfig, FaceDetec
 int main(int argc, const char * argv[])
 {
 #ifdef TSC_TIMING
-	fd_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fd_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 
 #ifdef CLOCK_GETTIME_TIMING
 	//fd_timingVector.resize(16);
-	fd_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fd_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 
 	return faceDetection_main(argc, argv);

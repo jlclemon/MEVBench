@@ -46,10 +46,10 @@ vector<struct timespec> aug_timeStructVector;
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start,Finish" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start,Finish,Mid" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i] << "," << timingVector[i+timingVector.size()/2] << endl;
+				outputFile << i << "," << timingVector[i] << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS]<< ","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS] << endl;
 
 			}
 			outputFile.close();
@@ -61,15 +61,16 @@ vector<struct timespec> aug_timeStructVector;
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec,Mid sec, Mid nsec" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+timingVector.size()/2].tv_sec<<","<< timingVector[i+timingVector.size()/2].tv_nsec <<endl;
+				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_nsec<< "," << timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_nsec <<endl;
 
 			}
 			outputFile.close();
 		}
 #endif
+
 
 void readFileListFromFile(string fileListFilename, string filesBaseDir,vector<string> &fileList)
 {
@@ -1516,10 +1517,10 @@ int augmentedReality_main(int argc, const char * argv[])
 #endif
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( aug_timingVector[0+ aug_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( aug_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(aug_timeStructVector[0+ aug_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(aug_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 #ifdef TSC_TIMING
 		aug_writeTimingToFile(aug_timingVector);
@@ -1539,11 +1540,11 @@ int augmentedReality_main(int argc, const char * argv[])
 int main(int argc, const char * argv[])
 {
 #ifdef TSC_TIMING
-	aug_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	aug_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 	//fe_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	aug_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	aug_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 
 	return augmentedReality_main(argc, argv);

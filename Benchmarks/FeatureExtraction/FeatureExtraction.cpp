@@ -1202,6 +1202,12 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 #ifdef USE_GEM5
 	m5_dumpreset_stats(0, 0);
 #endif
+#ifdef TSC_TIMING
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[ 0 + TIMING_MAX_NUMBER_OF_THREADS*2 );
+#endif
+#ifdef CLOCK_GETTIME_TIMING
+	GET_TIME_WRAPPER(fe_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+#endif
 
 		if(featureExtractionConfig.currentDescriptorAlgo == FEATURE_DESC_HoG)
 		{
@@ -1434,10 +1440,10 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[ 0 + fe_timingVector.size() /2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[ 0 + TIMING_MAX_NUMBER_OF_THREADS );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fe_timeStructVector[0+ fe_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fe_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 	cout << "Timing Done" << endl;
 	if(featureExtractionConfig.saveAllDescToSingleFile)
@@ -2511,6 +2517,14 @@ void featureExtractionHandleFeatureExtractionWorker(struct GeneralWorkerThreadDa
 //		myThread->waitAtBarrier();
 //	}
 
+#ifndef FEATURE_EXTRACTION_MODULE
+#ifdef TSC_TIMING
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[ genData->myThread->getThreadLogicalId() + TIMING_MAX_NUMBER_OF_THREADS*2 );
+#endif
+#ifdef CLOCK_GETTIME_TIMING
+	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+#endif
+#endif
 	// TODO Add in descriptor building right here --->
 	featureExtractionHandleMultiThreadBuildFeatureDescriptors(genData,workerThreadInfo);
 
@@ -2577,6 +2591,14 @@ void featureExtractionHandleFeatureExtractionCoordinator(struct GeneralWorkerThr
 	m5_dumpreset_stats(0, 0);
 #endif
 
+#ifndef FEATURE_EXTRACTION_MODULE
+#ifdef TSC_TIMING
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[ 0 + TIMING_MAX_NUMBER_OF_THREADS*2 );
+#endif
+#ifdef CLOCK_GETTIME_TIMING
+	GET_TIME_WRAPPER(fe_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+#endif
+#endif
 	// TODO Add in descriptor building right here --->
 	featureExtractionHandleMultiThreadBuildFeatureDescriptors(genData,workerThreadInfo);
 
@@ -2726,7 +2748,7 @@ void  featureExtractionWorkerThreadFunctionStandAlone(struct GeneralWorkerThread
 	myMultiThreadExtractionData->clearNonShared();
 	myThread->waitAtBarrier();
 
-	cout << genData->myThread->getThreadLogicalId()<<" passed barrier Got Image" << endl;
+	//cout << genData->myThread->getThreadLogicalId()<<" passed barrier Got Image" << endl;
 	if(workerThreadInfo->featureExtractionInfo->outOfImages || workerThreadInfo->myFeatureExtractionInfo->outOfImages)
 	{
 
@@ -2835,10 +2857,10 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[(genData->myThread->getThreadLogicalId() + fe_timingVector.size()/2)] );
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[(genData->myThread->getThreadLogicalId() + TIMING_MAX_NUMBER_OF_THREADS)] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ fe_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 
 
@@ -2860,10 +2882,10 @@ void * featureExtraction_testWorkerThreadStandAlone(void * threadParam)
 	featureExtractionWorkerThreadFunctionStandAlone(genData,genData->featureExtractionData);
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[(genData->myThread->getThreadLogicalId() + fe_timingVector.size()/2)] );
+	READ_TIMESTAMP_WITH_WRAPPER( fe_timingVector[(genData->myThread->getThreadLogicalId() + TIMING_MAX_NUMBER_OF_THREADS)] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ fe_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fe_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 	return NULL;
 	//pthread_exit(NULL);
@@ -3564,10 +3586,10 @@ void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start,Finish" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start,Finish,Mid" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i] << "," << timingVector[i+timingVector.size()/2] << endl;
+				outputFile << i << "," << timingVector[i] << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS]<< ","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS] << endl;
 
 			}
 			outputFile.close();
@@ -3579,10 +3601,10 @@ void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec,Mid sec, Mid nsec" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+timingVector.size()/2].tv_sec<<","<< timingVector[i+timingVector.size()/2].tv_nsec <<endl;
+				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_nsec<< "," << timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_nsec <<endl;
 
 			}
 			outputFile.close();
@@ -3664,10 +3686,10 @@ int main(int argc, const char * argv[])
 
 
 #ifdef TSC_TIMING
-	fe_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fe_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	fe_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fe_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 
 #endif
 	if(featureExtractionConfig.singleThreaded ==false)

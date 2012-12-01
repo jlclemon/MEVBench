@@ -2398,6 +2398,15 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 			cout << "done"  << endl;
 #endif
 		}
+
+#ifndef FEATURE_CLASSIFICATION_MODULE
+		#ifdef TSC_TIMING
+			READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+		#endif
+		#ifdef CLOCK_GETTIME_TIMING
+			GET_TIME_WRAPPER(fc_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+		#endif		
+#endif
 		if(featureClassificationConfig.classifyActive)
 		{
 #ifdef VERBOSE_DEBUG
@@ -2427,10 +2436,10 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ fc_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fc_timeStructVector[0+ fc_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fc_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 }
 
@@ -2505,6 +2514,16 @@ void * classificationWorkerThreadFunction(void * workerThreadStruct)
 				threadParams->multiThreadMatchResults->copyToReultsVec(matches,threadParams->descriptorStartIndex);
 			}
 		}
+#ifndef FEATURE_CLASSIFICATION_MODULE
+		#ifdef TSC_TIMING
+			READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+		#endif
+		#ifdef CLOCK_GETTIME_TIMING
+			GET_TIME_WRAPPER(fc_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+		#endif		
+#endif
+
+
 		if(threadParams->myFeatureClassificationInfo->classifyActive)
 		{
 
@@ -2530,10 +2549,10 @@ void * classificationWorkerThreadFunction(void * workerThreadStruct)
 	}
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId() + fc_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId() + TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fc_timeStructVector[threadParams->myThread->getThreadLogicalId()+ fc_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fc_timeStructVector[threadParams->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 	return NULL;
 }
@@ -2689,6 +2708,19 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 			cout << "coordinator done"  << endl;
 #endif
 		}
+
+
+#ifndef FEATURE_CLASSIFICATION_MODULE
+		#ifdef TSC_TIMING
+			READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+		#endif
+		#ifdef CLOCK_GETTIME_TIMING
+			GET_TIME_WRAPPER(fc_timeStructVector[0+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+		#endif		
+#endif
+
+
+
 		if(threadParams->myFeatureClassificationInfo->classifyActive)
 		{
 #ifdef VERBOSE_DEBUG
@@ -2739,10 +2771,10 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 #endif
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId() + fc_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fc_timingVector[threadParams->myThread->getThreadLogicalId() + TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fc_timeStructVector[threadParams->myThread->getThreadLogicalId()+ fc_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fc_timeStructVector[threadParams->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 	return NULL;
 }
@@ -2790,6 +2822,28 @@ vector<KeyPoint> getQueryKeyPointsForThread(FeatureClassificationConfig &feature
 	vector<KeyPoint> myKeyPoints;
 
 
+
+
+	int numberExtraWork = numberOfKeyPoints - (keyPointCountPerThread * numberOfThreads);
+	int startIdOffset = 0;
+
+	if(numberExtraWork > 0)
+	{
+
+		if(myThreadId <= numberExtraWork-1)
+		{
+			currentThreadKeyPointCount++;
+			startKeyPointIndex = myThreadId *currentThreadKeyPointCount;
+		}else
+		{
+			
+			startKeyPointIndex = myThreadId *currentThreadKeyPointCount+numberExtraWork;
+
+		}
+
+
+	}
+
 	if(myThreadId == numberOfThreads-1)
 	{
 		currentThreadKeyPointCount = numberOfKeyPoints - startKeyPointIndex;
@@ -2812,7 +2866,6 @@ vector<KeyPoint> getQueryKeyPointsForThread(FeatureClassificationConfig &feature
 
 	return myKeyPoints;
 
-
 }
 Mat getQueryDescriptorsForThread(FeatureClassificationConfig& featureClassificationConfig,int verticalThreads, int horizontalThreads,int & descStartIndex,Mat& queryDescriptors,struct WorkerThreadInfo * workerInfo)
 {
@@ -2826,15 +2879,30 @@ Mat getQueryDescriptorsForThread(FeatureClassificationConfig& featureClassificat
 	int startDescriptorIndex = myThreadId *currentThreadDescriptorCount;
 	//int decStartIndex;
 	Mat myDescriptors;
+	int numberExtraWork = numberOfDescriptors - (descriptorCountPerThread * numberOfThreads);
+	int startIdOffset = 0;
 
-
-	if(myThreadId == numberOfThreads-1)
+	if(numberExtraWork > 0)
 	{
-		currentThreadDescriptorCount = numberOfDescriptors - startDescriptorIndex;
+
+		if(myThreadId <= numberExtraWork-1)
+		{
+			currentThreadDescriptorCount++;
+			startDescriptorIndex = myThreadId *currentThreadDescriptorCount;
+		}else
+		{
+			
+			startDescriptorIndex = myThreadId *currentThreadDescriptorCount+numberExtraWork;
+
+		}
 
 
 	}
-	descStartIndex = startDescriptorIndex;
+	if(myThreadId == numberOfThreads-1)
+	{
+		currentThreadDescriptorCount = numberOfDescriptors - startDescriptorIndex;
+	}
+	descStartIndex = startDescriptorIndex + startIdOffset;
 	Range descRange(startDescriptorIndex,startDescriptorIndex+currentThreadDescriptorCount);
 	myDescriptors = queryDescriptors.rowRange(descRange).clone();
 	//workerinfo->myDescriptors = myDescriptors;
@@ -4369,10 +4437,10 @@ int featureClassification_testSeperate(int argc, const char * argv[])
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start,Finish" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start,Finish,Mid" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i] << "," << timingVector[i+timingVector.size()/2] << endl;
+				outputFile << i << "," << timingVector[i] << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS]<< ","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS] << endl;
 
 			}
 			outputFile.close();
@@ -4384,16 +4452,15 @@ int featureClassification_testSeperate(int argc, const char * argv[])
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec,Mid sec, Mid nsec" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+timingVector.size()/2].tv_sec<<","<< timingVector[i+timingVector.size()/2].tv_nsec <<endl;
+				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_nsec<< "," << timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_nsec <<endl;
 
 			}
 			outputFile.close();
 		}
 #endif
-
 
 
 int featureClassification_main(int argc, const char * argv[])
@@ -4402,11 +4469,11 @@ int featureClassification_main(int argc, const char * argv[])
 
 	std::cout << "Feature Classification Mechanism" << std::endl;
 #ifdef TSC_TIMING
-	fc_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fc_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
 	//fc_timeStructVector.resize(16);
-	fc_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fc_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 
 #ifdef SPLASH_SCREEN

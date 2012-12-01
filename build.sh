@@ -28,7 +28,7 @@
 
 
 if [ -z "$USE_EFFEX" ]; then
-	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeInstall"
+	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall"
 else
 	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall"
 fi
@@ -80,6 +80,7 @@ else
 	#export XTRA_PARAMS="-DTSC_TIMING"
 
 	export XTRA_PARAMS="-DCLOCK_GETTIME_TIMING -DOPENCV_2_4"
+	export XTRA_LIBS="opencv_effex"
 fi
 if [ -n "$USE_EFFEX" ]; then
 	echo "$USE_EFFEX Using Effex"

@@ -122,6 +122,14 @@ void internalCallToTestExtractionAlone(int argc, const char * argv[], bool callD
 	if(callDirect)
 	{
 		multiThreadFeatureExtraction_StandAloneTest(argc,argv);
+
+	#ifdef TSC_TIMING
+		//READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+	#endif
+	#ifdef CLOCK_GETTIME_TIMING
+		//GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+	#endif
+
 		featureClassification_testSeperate(argc, argv);
 
 	}
@@ -216,6 +224,14 @@ void * coordinatorThreadFunction(void * threadParam)
 
 		}
 #endif
+		#ifdef TSC_TIMING
+			READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+		#endif
+		#ifdef CLOCK_GETTIME_TIMING
+			GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+		#endif
+
+
 		if(featureExtractionData->featureExtractionInfo->outOfImages || featureExtractionData->myFeatureExtractionInfo->outOfImages)
 		{
 			break;
@@ -270,10 +286,10 @@ void * coordinatorThreadFunction(void * threadParam)
 
 
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ fec_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ fec_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 
 
@@ -308,6 +324,15 @@ void * workerThreadFunction(void * threadParam)
 		//Run the functions
 		featureExtractionWorkerThreadFunctionStandAlone(genData,genData->featureExtractionData);
 
+
+#ifdef TSC_TIMING
+	READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2] );
+#endif
+#ifdef CLOCK_GETTIME_TIMING
+	GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS*2]);
+#endif
+
+
 		if(featureExtractionData->featureExtractionInfo->outOfImages || featureExtractionData->myFeatureExtractionInfo->outOfImages)
 		{
 			break;
@@ -317,10 +342,10 @@ void * workerThreadFunction(void * threadParam)
 
 	}
 #ifdef TSC_TIMING
-	READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ fec_timingVector.size()/2] );
+	READ_TIMESTAMP_WITH_WRAPPER( fec_timingVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS] );
 #endif
 #ifdef CLOCK_GETTIME_TIMING
-	GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ fec_timeStructVector.size()/2]);
+	GET_TIME_WRAPPER(fec_timeStructVector[genData->myThread->getThreadLogicalId()+ TIMING_MAX_NUMBER_OF_THREADS]);
 #endif
 
 	globalDone = true;
@@ -661,10 +686,10 @@ void runMultiThreadedFeatureExtractionAndClassification(int argc, const char * a
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start,Finish" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start,Finish,Mid" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i] << "," << timingVector[i+timingVector.size()/2] << endl;
+				outputFile << i << "," << timingVector[i] << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS]<< ","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS] << endl;
 
 			}
 			outputFile.close();
@@ -676,10 +701,10 @@ void runMultiThreadedFeatureExtractionAndClassification(int argc, const char * a
 
 			ofstream outputFile;
 			outputFile.open("timing.csv");
-			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec" << endl;
-			for(int i = 0; i<(timingVector.size()/2); i++)
+			outputFile << "Thread,Start sec, Start nsec,Finish sec, Finish nsec,Mid sec, Mid nsec" << endl;
+			for(int i = 0; i<(TIMING_MAX_NUMBER_OF_THREADS); i++)
 			{
-				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+timingVector.size()/2].tv_sec<<","<< timingVector[i+timingVector.size()/2].tv_nsec <<endl;
+				outputFile << i << "," << timingVector[i].tv_sec<<","<< timingVector[i].tv_nsec << "," << timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+TIMING_MAX_NUMBER_OF_THREADS].tv_nsec<< "," << timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_sec<<","<< timingVector[i+2*TIMING_MAX_NUMBER_OF_THREADS].tv_nsec <<endl;
 
 			}
 			outputFile.close();
@@ -687,26 +712,22 @@ void runMultiThreadedFeatureExtractionAndClassification(int argc, const char * a
 #endif
 
 
-void classification_sig_handler(int signum)
-{
-    feclearexcept(FE_ALL_EXCEPT);
-}
 
 
 int main (int argc, const char * argv[])
 {
-#ifdef USE_GEM5
-    signal(SIGFPE, classification_sig_handler); 
-#endif
+
+
+
 
 
 	cout << "Hello world" << endl;
 #ifdef TSC_TIMING
-	fec_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fec_timingVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 #ifdef CLOCK_GETTIME_TIMING
 	//fec_timeStructVector.resize(16);
-	fec_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*2);
+	fec_timeStructVector.resize(TIMING_MAX_NUMBER_OF_THREADS*3);
 #endif
 
 	internalCallToTestExtractionAlone(argc,argv,false);

@@ -1,30 +1,3 @@
-/*
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met: redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer;
- * redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution;
- * neither the name of the copyright holders nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 // -*- c++ -*-
 //
 // PTLsim: Cycle Accurate x86-64 Simulator
@@ -266,7 +239,7 @@ static inline W64 ptlcall_marker(W64 marker) {
 //
 // For utility usage in benchmarks:
 //
-static W64 ptlsim_marker_id = 0;
+//static W64 ptlsim_marker_id = 0;
 #endif // !PTLCALLS_USERSPACE
 
 //
@@ -300,7 +273,7 @@ struct PTLsimCommandDescriptor {
 static inline W64 ptlcall_multi(char* const list[], size_t length, int flush) {
   struct PTLsimCommandDescriptor* desc = (struct PTLsimCommandDescriptor*)malloc(length * sizeof(struct PTLsimCommandDescriptor));
   W64 rc;
-  int i;
+  size_t i;
 
   for (i = 0; i < length; i++) {
     desc[i].command = (W64)list[i];
@@ -348,7 +321,7 @@ static inline W64 ptlcall_switch_to_sim() {
 }
 
 static inline W64 ptlcall_switch_to_native() {
-  return ptlcall_single_flush("-native");
+  return ptlcall_single_flush("-stop");
 }
 
 static inline W64 ptlcall_kill() {
@@ -423,6 +396,37 @@ static inline W64 ptlcall_checkpoint_dummy() {
   return ptlcall_checkpoint_generic(name, PTLCALL_CHECKPOINT_DUMMY);
 }
 
+
+#endif // PTLCALLS_USERSPACE
+
+//
+// Application Crash Core Dump handling support. We modify the linux kernel's
+// '/proc/sys/kernel/core_pattern' to custom core-dump handler that pass the
+// core dump from VM to Host for debugging crashes. Supported customized core
+// dump handler can be found in 'core-dump-handler.c' file. Set the
+// 'core_pattern' to be '|/bin/core-dump-handler %s %e'.
+//
+#define PTLCALL_CORE_DUMP    4
+
+#ifdef PTLCALLS_USERSPACE
+
+static inline W64 ptlcall_core_dump(const char* dump, const W64 size,
+        const char* name, const int signum) {
+    return ptlcall(PTLCALL_CORE_DUMP, (W64)dump, size,
+            (W64)name, strlen(name), (W64)signum, 0);
+}
+
+#endif // PTLCALLS_USERSPACE
+
+#define PTLCALL_LOG 5
+
+#ifdef PTLCALLS_USERSPACE
+
+static inline void ptlcall_log(const char* log)
+{
+	int length = strlen(log);
+	ptlcall(PTLCALL_LOG, (W64)log, length, 0, 0, 0, 0);
+}
 
 #endif // PTLCALLS_USERSPACE
 

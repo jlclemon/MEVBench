@@ -183,7 +183,8 @@ void * coordinatorThreadFunction(void * threadParam)
 	cout << "Switching to simulation in Object Recognition." << endl;
 	ptlcall_switch_to_sim();
 	//ptlcall_single_enqueue("-logfile objRecog.log");
-	ptlcall_single_enqueue("-stats objRecog.stats");
+	//ptlcall_single_enqueue("-stats objRecog.stats");
+	ptlcall_single_flush("-stats objRecog.stats");
 	//ptlcall_single_enqueue("-loglevel 0");
 #endif
 

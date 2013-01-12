@@ -720,7 +720,8 @@ void setupFaceDetectionData(FaceDetectionConfig & faceDetectionConfig, FaceDetec
 	cout << "Switching to simulation in Face Detection." << endl;
 	ptlcall_switch_to_sim();
 	//ptlcall_single_enqueue("-logfile augReality.log");
-	ptlcall_single_enqueue("-stats faceDetect.stats");
+	//ptlcall_single_enqueue("-stats faceDetect.stats");
+	ptlcall_single_flush("-stats faceDetect.stats");
 	//ptlcall_single_enqueue("-loglevel 0");
 #endif
 

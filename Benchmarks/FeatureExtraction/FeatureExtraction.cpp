@@ -795,37 +795,37 @@ void featureExtractionSingleThreadedMain(FeatureExtractionConfig & featureExtrac
 	{
 	case FEATURE_DESC_SIFT:
 		//ptlcall_single_enqueue("-logfile featureExtract_sift.log");
-		ptlcall_single_enqueue("-stats featureExtract_sift.stats");
+		ptlcall_single_flush("-stats featureExtract_sift.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_SURF:
 		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
-		ptlcall_single_enqueue("-stats featureExtract_surf.stats");
+		ptlcall_single_flush("-stats featureExtract_surf.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_ORB:
 		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
-		ptlcall_single_enqueue("-stats featureExtract_orb.stats");
+		ptlcall_single_flush("-stats featureExtract_orb.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_FAST:
 		//ptlcall_single_enqueue("-logfile featureExtract_fast.log");
-		ptlcall_single_enqueue("-stats featureExtract_fast.stats");
+		ptlcall_single_flush("-stats featureExtract_fast.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_HoG:
 		//ptlcall_single_enqueue("-logfile featureExtract_hog.log");
-		ptlcall_single_enqueue("-stats featureExtract_hog.stats");
+		ptlcall_single_flush("-stats featureExtract_hog.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_BRIEF:
 		//ptlcall_single_enqueue("-logfile featureExtract_brief.log");
-		ptlcall_single_enqueue("-stats featureExtract_brief.stats");
+		ptlcall_single_flush("-stats featureExtract_brief.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	default:
 		//ptlcall_single_enqueue("-logfile featureExtract.log");
-		ptlcall_single_enqueue("-stats featureExtract.stats");
+		ptlcall_single_flush("-stats featureExtract.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 
@@ -2788,37 +2788,37 @@ void * featureExtraction_testCoordinatorThreadStandAlone(void * threadParam)
 	{
 	case FEATURE_DESC_SIFT:
 		//ptlcall_single_enqueue("-logfile featureExtract_sift.log");
-		ptlcall_single_enqueue("-stats featureExtract_sift.stats");
+		ptlcall_single_flush("-stats featureExtract_sift.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_SURF:
 		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
-		ptlcall_single_enqueue("-stats featureExtract_surf.stats");
+		ptlcall_single_flush("-stats featureExtract_surf.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_ORB:
 		//ptlcall_single_enqueue("-logfile featureExtract_surf.log");
-		ptlcall_single_enqueue("-stats featureExtract_orb.stats");
+		ptlcall_single_flush("-stats featureExtract_orb.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_FAST:
 		//ptlcall_single_enqueue("-logfile featureExtract_fast.log");
-		ptlcall_single_enqueue("-stats featureExtract_fast.stats");
+		ptlcall_single_flush("-stats featureExtract_fast.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_HoG:
 		//ptlcall_single_enqueue("-logfile featureExtract_hog.log");
-		ptlcall_single_enqueue("-stats featureExtract_hog.stats");
+		ptlcall_single_flush("-stats featureExtract_hog.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_DESC_BRIEF:
 		//ptlcall_single_enqueue("-logfile featureExtract_brief.log");
-		ptlcall_single_enqueue("-stats featureExtract_brief.stats");
+		ptlcall_single_flush("-stats featureExtract_brief.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	default:
 		//ptlcall_single_enqueue("-logfile featureExtract.log");
-		ptlcall_single_enqueue("-stats featureExtract.stats");
+		ptlcall_single_flush("-stats featureExtract.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 

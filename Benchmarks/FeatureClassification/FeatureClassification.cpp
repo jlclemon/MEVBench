@@ -2333,32 +2333,32 @@ switch(featureClassificationConfig.currentClassificationAlgo)
 {
 	case FEATURE_CLASSIFIER_LINEAR_SVM:
 		//ptlcall_single_enqueue("-logfile featureClassify_svm.log");
-		ptlcall_single_enqueue("-stats featureClassify_svm.stats");
+		ptlcall_single_flush("-stats featureClassify_svm.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 		case FEATURE_CLASSIFIER_BOOSTED_TREE_STUMPS:
 		//ptlcall_single_enqueue("-logfile featureClassify_boost.log");
-		ptlcall_single_enqueue("-stats featureClassify_boost.stats");
+		ptlcall_single_flush("-stats featureClassify_boost.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_CLASSIFIER_KNN_FLANN:
 		//ptlcall_single_enqueue("-logfile featureClassify_knn.log");
-		ptlcall_single_enqueue("-stats featureClassify_knn.stats");
+		ptlcall_single_flush("-stats featureClassify_knn.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_CLASSIFIER_KNN_HESS_KDTREE:
 		//ptlcall_single_enqueue("-logfile featureClassify_hess.log");
-		ptlcall_single_enqueue("-stats featureClassify_hess.stats");
+		ptlcall_single_flush("-stats featureClassify_hess.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	case FEATURE_CLASSIFIER_GEOMETRIC_CENTER:
 		//ptlcall_single_enqueue("-logfile featureClassify_geom.log");
-		ptlcall_single_enqueue("-stats featureClassify_geom.stats");
+		ptlcall_single_flush("-stats featureClassify_geom.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 	default:
 		//ptlcall_single_enqueue("-logfile featureClassify.log");
-		ptlcall_single_enqueue("-stats featureClassify.stats");
+		ptlcall_single_flush("-stats featureClassify.stats");
 		//ptlcall_single_enqueue("-loglevel 0");
 		break;
 
@@ -2611,32 +2611,32 @@ void * classificationCoordinatorThreadFunction(void * workerThreadStruct)
 	{
 		case FEATURE_CLASSIFIER_LINEAR_SVM:
 			//ptlcall_single_enqueue("-logfile featureClassify_svm.log");
-			ptlcall_single_enqueue("-stats featureClassify_svm.stats");
+			ptlcall_single_flush("-stats featureClassify_svm.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_BOOSTED_TREE_STUMPS:
 			//ptlcall_single_enqueue("-logfile featureClassify_boost.log");
-			ptlcall_single_enqueue("-stats featureClassify_boost.stats");
+			ptlcall_single_flush("-stats featureClassify_boost.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_KNN_FLANN:
 			//ptlcall_single_enqueue("-logfile featureClassify_knn.log");
-			ptlcall_single_enqueue("-stats featureClassify_knn.stats");
+			ptlcall_single_flush("-stats featureClassify_knn.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_KNN_HESS_KDTREE:
 			//ptlcall_single_enqueue("-logfile featureClassify_hess.log");
-			ptlcall_single_enqueue("-stats featureClassify_hess.stats");
+			ptlcall_single_flush("-stats featureClassify_hess.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_GEOMETRIC_CENTER:
 			//ptlcall_single_enqueue("-logfile featureClassify_geom.log");
-			ptlcall_single_enqueue("-stats featureClassify_geom.stats");
+			ptlcall_single_flush("-stats featureClassify_geom.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		default:
 			//ptlcall_single_enqueue("-logfile featureClassify.log");
-			ptlcall_single_enqueue("-stats featureClassify.stats");
+			ptlcall_single_flush("-stats featureClassify.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 
@@ -4246,32 +4246,32 @@ void * featureClassification_testCoordinatorThreadStandAlone(void * threadParam)
 	{
 		case FEATURE_CLASSIFIER_LINEAR_SVM:
 			//ptlcall_single_enqueue("-logfile featureClassify_svm.log");
-			ptlcall_single_enqueue("-stats featureClassify_svm.stats");
+			ptlcall_single_flush("-stats featureClassify_svm.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_BOOSTED_TREE_STUMPS:
 			//ptlcall_single_enqueue("-logfile featureClassify_boost.log");
-			ptlcall_single_enqueue("-stats featureClassify_boost.stats");
+			ptlcall_single_flush("-stats featureClassify_boost.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_KNN_FLANN:
 			//ptlcall_single_enqueue("-logfile featureClassify_knn.log");
-			ptlcall_single_enqueue("-stats featureClassify_knn.stats");
+			ptlcall_single_flush("-stats featureClassify_knn.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_KNN_HESS_KDTREE:
 			//ptlcall_single_enqueue("-logfile featureClassify_hess.log");
-			ptlcall_single_enqueue("-stats featureClassify_hess.stats");
+			ptlcall_single_flush("-stats featureClassify_hess.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		case FEATURE_CLASSIFIER_GEOMETRIC_CENTER:
 			//ptlcall_single_enqueue("-logfile featureClassify_geom.log");
-			ptlcall_single_enqueue("-stats featureClassify_geom.stats");
+			ptlcall_single_flush("-stats featureClassify_geom.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 		default:
 			//ptlcall_single_enqueue("-logfile featureClassify.log");
-			ptlcall_single_enqueue("-stats featureClassify.stats");
+			ptlcall_single_flush("-stats featureClassify.stats");
 			//ptlcall_single_enqueue("-loglevel 0");
 			break;
 

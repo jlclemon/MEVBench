@@ -1145,7 +1145,8 @@ int augmentedReality_main(int argc, const char * argv[])
 	cout << "Switching to simulation in Augmented Reality." << endl;
 	ptlcall_switch_to_sim();
 	//ptlcall_single_enqueue("-logfile augReality.log");
-	ptlcall_single_enqueue("-stats augReality.stats");
+	//ptlcall_single_enqueue("-stats augReality.stats");
+	ptlcall_single_flush("-stats augReality.stats");
 	//ptlcall_single_enqueue("-loglevel 0");
 #endif
 

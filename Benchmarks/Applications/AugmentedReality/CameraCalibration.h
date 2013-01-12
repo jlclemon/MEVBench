@@ -49,7 +49,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/ml/ml.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-
+#include <unistd.h>
 using namespace std;
 using namespace cv;
 
@@ -68,7 +68,7 @@ using namespace cv;
 #define CAMERA_CALIBRATION_DEFAULT_DELAY 1000
 
 
-
+#define sleep(val) { usleep(val);}
 
 class CameraCalibration {
 public:

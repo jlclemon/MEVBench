@@ -28,7 +28,7 @@
 
 
 if [ -z "$USE_EFFEX" ]; then
-	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall"
+	export OpenCV_DIR="/home/jlclemon/Documents/OpenCVInstalls/OpenCV2.4.2Defaults"
 else
 	export OpenCV_DIR="/home/jlclemon/Documents/OpenCV/OpenCV2.4.2NativeCustomInstall"
 fi

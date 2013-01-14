@@ -29,6 +29,9 @@
 
 #include "FeatureClassification.hpp"
 #include "WorkerThreadInfo.h"
+#include <sched.h>
+#include <unistd.h>
+
 
 #ifdef USE_MARSS
 #warning "Using MARSS"
@@ -115,9 +118,33 @@ void threadTestMain()
 		int numberOfThreads = classificationThreadManager.addThread(currentThread);
 	}
 
+
+	pthread_attr_t threadAttributes;
+	
+	int ret = pthread_attr_init(&threadAttributes);
+
+	int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+	int core_id;
+	cpu_set_t cpuset;
+
+
 	for(int i = 0; i<numberOfThreads;i++)
 	{
+
+
+
+
 		Thread * currentThreadPtr = (classificationThreadManager.getThread(i));
+
+		core_id= i % num_cores; 
+		CPU_ZERO(&cpuset);
+		CPU_SET(core_id, &cpuset);
+		ret = pthread_attr_setaffinity_np(&threadAttributes, sizeof(cpu_set_t), &cpuset);
+		if(ret !=0)
+		{
+			cout << "Error setting core affinity: " << strerror(ret) << endl;			
+		}
+
 
 
 		currentThreadPtr->setThreadLogicalId(i);
@@ -126,7 +153,7 @@ void threadTestMain()
 		classificationThreadManager.setThreadBarrier(i);
 		cout << "Thread Param "<< currentThreadPtr << endl;
 
-		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),NULL,currentThreadPtr->getThreadFunction(),currentThreadPtr);
+		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),&threadAttributes,currentThreadPtr->getThreadFunction(),currentThreadPtr);
 		if(errcode != 0)
 		{
 			cout << "Error creating thread: " << strerror(errcode) << endl;
@@ -137,6 +164,21 @@ void threadTestMain()
 
 
 	}
+	core_id = num_cores -1;
+	CPU_ZERO(&cpuset);
+	CPU_SET(core_id, &cpuset);
+
+	pthread_t current_thread = pthread_self();    
+	ret = pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+	if(ret !=0)
+	{
+		cout << "Error setting core affinity: " << strerror(ret) << endl;			
+	}
+
+
+
+	/* destroy an attribute */
+	ret = pthread_attr_destroy(&threadAttributes);
 
 
 
@@ -3276,6 +3318,14 @@ void setupClassificationThreads(FeatureClassificationConfig & featureClassificat
 
 	}
 
+	pthread_attr_t threadAttributes;
+	
+	int ret = pthread_attr_init(&threadAttributes);
+
+	int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+	int core_id;
+	cpu_set_t cpuset;
+
 
 	//Done so we can have the work waiting for them once they are spawned
 	for(int i = 0; i<numberOfThreads;i++)
@@ -3283,12 +3333,41 @@ void setupClassificationThreads(FeatureClassificationConfig & featureClassificat
 		Thread * currentThreadPtr = (classificationThreadManager->getThread(i));
 		struct WorkerThreadInfo * currentWorkerThreadInfo = &workingThreads[i];
 
-		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),NULL,currentThreadPtr->getThreadFunction(),currentWorkerThreadInfo);
+		core_id= i % num_cores; 
+		CPU_ZERO(&cpuset);
+		CPU_SET(core_id, &cpuset);
+		ret = pthread_attr_setaffinity_np(&threadAttributes, sizeof(cpu_set_t), &cpuset);
+		if(ret !=0)
+		{
+			cout << "Error setting core affinity: " << strerror(ret) << endl;			
+		}
+
+
+		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),&threadAttributes,currentThreadPtr->getThreadFunction(),currentWorkerThreadInfo);
 		if(errcode != 0)
 		{
 			cout << "Error creating thread: " << strerror(errcode) << endl;
 		}
 	}
+
+
+	core_id = num_cores -1;
+	CPU_ZERO(&cpuset);
+	CPU_SET(core_id, &cpuset);
+
+	pthread_t current_thread = pthread_self();    
+	ret = pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+	if(ret !=0)
+	{
+		cout << "Error setting core affinity: " << strerror(ret) << endl;			
+	}
+
+
+
+	/* destroy an attribute */
+	ret = pthread_attr_destroy(&threadAttributes);
+
+
 
 
 }
@@ -3837,10 +3916,28 @@ void classificationSetupThreadManager(ThreadManager * &classificationThreadManag
 
 void classificationLaunchThreads(ThreadManager * &classificationThreadManager)
 {
+	pthread_attr_t threadAttributes;
+	
+	int ret = pthread_attr_init(&threadAttributes);
+
+	int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+	int core_id;
+	cpu_set_t cpuset;
+
 	//Done so we can have the work waiting for them once they are spawned
 	for(int i = 0; i<classificationThreadManager->getNumberOfThreads();i++)
 	{
 		Thread * currentThreadPtr = (classificationThreadManager->getThread(i));
+
+
+		core_id= i % num_cores; 
+		CPU_ZERO(&cpuset);
+		CPU_SET(core_id, &cpuset);
+		ret = pthread_attr_setaffinity_np(&threadAttributes, sizeof(cpu_set_t), &cpuset);
+		if(ret !=0)
+		{
+			cout << "Error setting core affinity: " << strerror(ret) << endl;			
+		}
 
 		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),NULL,currentThreadPtr->getThreadFunction(),currentThreadPtr->getThreadParam());
 		if(errcode != 0)
@@ -3848,6 +3945,24 @@ void classificationLaunchThreads(ThreadManager * &classificationThreadManager)
 			cout << "Error creating thread: " << strerror(errcode) << endl;
 		}
 	}
+
+	core_id = num_cores -1;
+	CPU_ZERO(&cpuset);
+	CPU_SET(core_id, &cpuset);
+
+	pthread_t current_thread = pthread_self();    
+	ret = pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+	if(ret !=0)
+	{
+		cout << "Error setting core affinity: " << strerror(ret) << endl;			
+	}
+
+
+
+	/* destroy an attribute */
+	ret = pthread_attr_destroy(&threadAttributes);
+
+
 }
 
 void setClassificationWorkingThreadDataInGeneralWorkingData(vector<GeneralWorkerThreadData> &genData, vector<struct WorkerThreadInfo> & workingThreads)

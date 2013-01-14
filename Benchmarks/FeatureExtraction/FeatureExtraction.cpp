@@ -66,8 +66,8 @@ extern "C"
 
 
 #endif
-
-
+#include <sched.h>
+#include <unistd.h>
 
 #ifdef TSC_TIMING
 vector<TSC_VAL_w> fe_timingVector;
@@ -3478,17 +3478,54 @@ void featureExtractionSetupThreadManager(ThreadManager * &threadManager,FeatureE
 
 void featureExtractionLaunchThreads(ThreadManager * &threadManager)
 {
+
+	pthread_attr_t threadAttributes;
+	
+	int ret = pthread_attr_init(&threadAttributes);
+
+	int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+	int core_id;
+	cpu_set_t cpuset;
+
+
+
 	//Done so we can have the work waiting for them once they are spawned
 	for(int i = 0; i<threadManager->getNumberOfThreads();i++)
 	{
 		Thread * currentThreadPtr = (threadManager->getThread(i));
 
-		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),NULL,currentThreadPtr->getThreadFunction(),currentThreadPtr->getThreadParam());
+		core_id= i % num_cores; 
+		CPU_ZERO(&cpuset);
+		CPU_SET(core_id, &cpuset);
+		ret = pthread_attr_setaffinity_np(&threadAttributes, sizeof(cpu_set_t), &cpuset);
+		if(ret !=0)
+		{
+			cout << "Error setting core affinity: " << strerror(ret) << endl;			
+		}
+
+		int errcode = pthread_create(currentThreadPtr->getThreadIdPtr(),&threadAttributes,currentThreadPtr->getThreadFunction(),currentThreadPtr->getThreadParam());
 		if(errcode != 0)
 		{
 			cout << "Error creating thread: " << strerror(errcode) << endl;
 		}
 	}
+	core_id = num_cores -1;
+	CPU_ZERO(&cpuset);
+	CPU_SET(core_id, &cpuset);
+
+	pthread_t current_thread = pthread_self();    
+	ret = pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+	if(ret !=0)
+	{
+		cout << "Error setting core affinity: " << strerror(ret) << endl;			
+	}
+
+
+
+	/* destroy an attribute */
+	ret = pthread_attr_destroy(&threadAttributes);
+
+
 }
 
 void multiThreadFeatureExtraction_StandAloneTest(int argc, const char * argv[])

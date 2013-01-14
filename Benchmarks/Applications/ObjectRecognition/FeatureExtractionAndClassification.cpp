@@ -35,6 +35,8 @@
  */
 
 #include <iostream>
+#include <sched.h>
+#include <unistd.h>
 #include <opencv2/features2d/features2d.hpp>
 #ifndef OPENCV_VER_2_3
 	#include <opencv2/nonfree/nonfree.hpp>

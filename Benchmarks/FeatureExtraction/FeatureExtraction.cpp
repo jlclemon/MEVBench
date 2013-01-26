@@ -1952,7 +1952,7 @@ void  featureExtractionCoordinatorThreadSetupFunctionStandAlone(struct GeneralWo
 	else
 	{
 		int overFlowAmount = 0;
-		int regionEndXLocation = workerThreadInfo->myPaddedImageRegionRect.x+  myFeatureExtractionData->xBufferAmount;
+		int regionEndXLocation = workerThreadInfo->myPaddedImageRegionRect.x+  myFeatureExtractionData->xBufferAmount +workerThreadInfo->myPaddedImageRegionRect.width;
 		if(regionEndXLocation> imageSize.width)
 		{
 
@@ -1998,7 +1998,7 @@ void  featureExtractionCoordinatorThreadSetupFunctionStandAlone(struct GeneralWo
 	else
 	{
 		int overFlowAmount = 0;
-		int regionEndLocation = workerThreadInfo->myPaddedImageRegionRect.y+  myFeatureExtractionData->yBufferAmount;
+		int regionEndLocation = workerThreadInfo->myPaddedImageRegionRect.y+  workerThreadInfo->myPaddedImageRegionRect.height+myFeatureExtractionData->yBufferAmount;
 		if(regionEndLocation> imageSize.height)
 		{
 

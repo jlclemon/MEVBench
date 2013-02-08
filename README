@@ -50,7 +50,7 @@ This package includes:
 
 *The base build MEVBench structure only has config files for 1,2,4 or 8 threads.  In order to use a different number of threads, a new config file needs to be made.
 
-
+*******************************************************************************************
 Directory Structure:
 	MEVBench
             |
@@ -131,15 +131,34 @@ Directory Structure:
                           | - pattern.png - pattern for performing calibration
                           | - ARMarker.pdf - Marker for Augmented Reality
                                              
-
+*******************************************************************************************
 Building MEVBench:
 
 
 Build OpenCV 2.4.2:
 	Download OpenCV 2.4.2 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com)
 		*This has been tested with the native builds static and dynamic.  Arm has not been tested but is expected to work.  To use on ARM add the -DOPENCV_2_4 to the ARM_XTRA_PARAMS in build.sh to be safe.
-	Note: When building static OpenCV for native ubuntu, you will need build 3rd party libraries.  In particular using cmake set it to build: jasper, jpeg, png, zlib, and tiff libraries.  Also build with 1394, eigen, jasper, jpeg, png, tiff, unicap.  Make sure to uncheck Build shared libs and build package.
+	Note 1: When building static OpenCV for native ubuntu, you will need build 3rd party libraries.  In particular using cmake-gui set it to build: jasper, jpeg, png, zlib, and tiff libraries.  Also build with 1394, eigen, jasper, jpeg, png, tiff, unicap.  Make sure to uncheck Build shared libs and build package.
 
+===========================================================================================
+
+	Note 2: When building static for arm cross compile, you will need to build 3rd party libraries.  In particular using cmake-gui, set it to build: BUILD_{Jasper, jpeg, png, with_debug_info, zlib, opencv_calib3d, opencv_core, opencv_features2d, opencv_flann, opencv_highgui, opencv_imgproc, opencv_ml, opencv_nonfree, opencv_objdetect, opencv_photo, opencv_stitching, opencv_video, opencv_video stab}
+You should disable the other BUILD_ items
+Under the WITH_ items you should enable: WITH_{JASPER, JPEG, PNG, PVAPI}
+You should disable other WITH_ items
+You should also modify the CMAKE_INSTALL_PREFIX to place the cross compile libraries somewhere other than /usr/bin.  The install prefix value is needed by the MEVBench build.sh.
+Then click configure and generate.  move the build directory and 'make install'.  
+
+If you get an error about missing pthread libraries you will need to go to the directory where the opencv code is and you need to modify the following files:
+
+${OPENCV_UNTAR_DIR}/apps/traincascade/CmakeLists.txt  - add rt and pthread to depends
+${OPENCV_UNTAR_DIR}/apps/haartraining/CmakeLists.txt  - add rt and pthread to depends
+
+===========================================================================================	
+
+	Note 3: When using the cmake-gui you can choose to use a cross compiler with options.  On unbuntu 12.04 using their gnu arm compiler package  with defaults options you can find the root for the compiler at: /usr/arm-linux-gnueabi or arm-linux-gnueabihf and the compilers can be found in /usr/bin
+
+===========================================================================================
 
 Build OpenCV 2.3.1:
 	Download OpenCV 2.3.1 and use cmake to cross compile for Arm (Directions can be found at opencv.willowgarage.com and opencv.org)
@@ -152,7 +171,7 @@ Build OpenCV 2.2:
 		If you plan on doing static builds or runs please build a separate static set of OpenCV Libraries
 
 
-
+*******************************************************************************************
 Setup Required Variables in build.sh:
 	Define OpenCV_DIR as the OpenCV Dynamically Linked Install Directory
 		export OpenCV_DIR=~/Documents/<OpenCV2.4.2InstallBase>		
@@ -166,7 +185,7 @@ Setup Required Variables in build.sh:
 	Add OpenCV Library Directory to the LD_LIBRARY_PATH before running
 		export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OpenCV_DIR/lib
 
-
+*******************************************************************************************
 Build the Benchmark:
 	In the MEVBench Root:
 		./build.sh static
@@ -175,14 +194,17 @@ Build the Benchmark:
 
 	For more information run build.sh with no parameters
 
-Run the Benchmark(Does not work for cross compiled versions because we assume you will run them in a simulator or on target other than where the cross compiled versions were built):
+*******************************************************************************************
+Run the Benchmark:
 	In the MEVBench Root:
    		./run.sh all
                  or ./run.sh for a list of options.
+	For the arm based cross compiled version you can use run_arm.sh.
+
 	
+*******************************************************************************************
 
-
-Next Update Will Include:
+Future Update Will Include:
 	Automatic Checker For results.
 
 How to check results:

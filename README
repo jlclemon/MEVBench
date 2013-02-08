@@ -188,9 +188,15 @@ Setup Required Variables in build.sh:
 *******************************************************************************************
 Build the Benchmark:
 	In the MEVBench Root:
-		./build.sh static
+		./build.sh static 
 		  or
-		./build.sh dynamic
+		./build.sh dynamic 
+		 or
+		./build.sh static arm
+		  or
+		./build.sh dynamic arm
+
+	Note 1: If using ARM you must set the ENV variable CROSS_COMPILE to the prefix of the cross compiler binary for example: export CROSS_COMPILE=arm-none-linux-gnueabi-  
 
 	For more information run build.sh with no parameters
 
